@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- 文件管理控件 -->
+    <string name="file_manage_no_file_tips">没有文件</string>
+    <string name="file_manage_limit_tips">访问限制</string>
+</resources>

@@ -1,0 +1,59 @@
+plugins {
+    id 'com.android.library'
+    id 'maven-publish'
+}
+
+task generateSourcesJar(type: Jar) {
+    from android.sourceSets.main.java.srcDirs
+    classifier 'sources'
+}
+
+afterEvaluate {
+    publishing {
+        publications {
+            release(MavenPublication) {
+                from components.release
+                groupId = 'com.next.view.file'
+                artifactId = 'FileView'
+                version = "1.0.0"
+            }
+        }
+    }
+}
+
+android {
+    namespace 'com.next.view.file'
+    compileSdk 33
+
+    defaultConfig {
+        minSdk 24
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+}
+
+dependencies {
+    //动画控件
+    implementation 'com.github.next-ara:AnimView:1.0.0'
+    //加载控件
+    implementation 'com.github.next-ara:LoadingView:1.0.0'
+    //圆角控件集
+    implementation 'com.github.next-ara:RoundView:1.0.0'
+    //文件辅助工具
+    implementation 'com.github.next-ara:FileHelper:1.0.0'
+
+    implementation 'com.github.bumptech.glide:glide:4.16.0'
+    implementation 'androidx.appcompat:appcompat:1.6.1'
+    implementation 'com.google.android.material:material:1.8.0'
+}

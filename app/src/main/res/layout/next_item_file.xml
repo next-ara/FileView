@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.next.module.animview.AnimRelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/dp_64"
+    android:background="?attr/colorSecondaryContainer"
+    android:paddingHorizontal="@dimen/dp_7"
+    app:radius="@dimen/dp_16">
+
+    <com.next.module.animview.AnimLinearLayout
+        android:id="@+id/layout_image"
+        android:layout_width="@dimen/dp_49"
+        android:layout_height="@dimen/dp_49"
+        android:layout_centerVertical="true"
+        android:background="#00FFFFFF"
+        app:radius="@dimen/dp_9">
+
+        <ImageView
+            android:id="@+id/image_file"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="centerCrop"
+            android:src="?attr/android:colorBackground" />
+
+    </com.next.module.animview.AnimLinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="@dimen/dp_13"
+        android:layout_marginRight="@dimen/dp_7"
+        android:layout_toLeftOf="@id/check_box_file"
+        android:layout_toRightOf="@id/layout_image"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tv_file_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ellipsize="middle"
+            android:fontFamily="sans-serif-medium"
+            android:singleLine="true"
+            android:text="文件夹"
+            android:textColor="?attr/colorOnPrimaryContainer"
+            android:textSize="@dimen/dp_19" />
+
+        <TextView
+            android:id="@+id/tv_file_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/dp_1"
+            android:alpha="0.6"
+            android:ellipsize="middle"
+            android:fontFamily="sans-serif-medium"
+            android:singleLine="true"
+            android:textColor="?attr/colorOnPrimaryContainer"
+            android:textSize="@dimen/dp_12" />
+
+    </LinearLayout>
+
+    <CheckBox
+        android:id="@+id/check_box_file"
+        android:layout_width="@dimen/dp_21"
+        android:layout_height="@dimen/dp_21"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:layout_marginRight="@dimen/dp_14"
+        android:background="@drawable/next_file_checkbox_selector"
+        android:button="@null"
+        android:visibility="gone" />
+
+</com.next.module.animview.AnimRelativeLayout>

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_file_manage"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:overScrollMode="always"
+        android:scrollbars="none" />
+
+    <LinearLayout
+        android:id="@+id/layout_no_file_tips"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:orientation="vertical">
+
+        <ImageView
+            android:layout_width="@dimen/dp_79"
+            android:layout_height="@dimen/dp_94"
+            android:layout_gravity="center"
+            android:src="@drawable/next_ic_no_file_tips" />
+
+        <TextView
+            android:id="@+id/tv_no_file_tips"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="@dimen/dp_12"
+            android:fontFamily="sans-serif-medium"
+            android:text="@string/file_manage_no_file_tips"
+            android:textColor="?attr/colorOnPrimaryContainer"
+            android:textSize="@dimen/dp_16" />
+
+    </LinearLayout>
+
+    <com.next.view.loading.LoadingView
+        android:id="@+id/loadingView"
+        android:layout_width="@dimen/dp_85"
+        android:layout_height="@dimen/dp_85"
+        android:layout_centerInParent="true"
+        android:visibility="gone"
+        app:loading_color_0="?attr/colorOnPrimaryContainer"
+        app:loading_color_1="?attr/colorSecondary"
+        app:loading_color_2="?attr/colorPrimaryInverse" />
+
+</RelativeLayout>
