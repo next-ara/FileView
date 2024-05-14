@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.next.module.animview.AnimRelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.next.view.anim.AnimRelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="@dimen/dp_64"
@@ -7,7 +7,7 @@
     android:paddingHorizontal="@dimen/dp_7"
     app:radius="@dimen/dp_16">
 
-    <com.next.module.animview.AnimLinearLayout
+    <com.next.view.anim.AnimLinearLayout
         android:id="@+id/layout_image"
         android:layout_width="@dimen/dp_49"
         android:layout_height="@dimen/dp_49"
@@ -22,7 +22,7 @@
             android:scaleType="centerCrop"
             android:src="?attr/android:colorBackground" />
 
-    </com.next.module.animview.AnimLinearLayout>
+    </com.next.view.anim.AnimLinearLayout>
 
     <LinearLayout
         android:layout_width="wrap_content"
@@ -70,4 +70,4 @@
         android:button="@null"
         android:visibility="gone" />
 
-</com.next.module.animview.AnimRelativeLayout>
+</com.next.view.anim.AnimRelativeLayout>
