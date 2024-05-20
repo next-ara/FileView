@@ -6,9 +6,10 @@
 
     <com.next.view.round.DampingReboundNestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        app:recyclerViewId="@id/rv_file_manage">
 
-        <androidx.recyclerview.widget.RecyclerView
+        <com.next.view.round.RoundRecyclerView
             android:id="@+id/rv_file_manage"
             android:layout_width="match_parent"
             android:layout_height="match_parent"

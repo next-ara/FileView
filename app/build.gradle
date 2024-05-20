@@ -15,7 +15,7 @@ afterEvaluate {
                 from components.release
                 groupId = 'com.next.view.file'
                 artifactId = 'FileView'
-                version = "1.0.2"
+                version = "1.0.3"
             }
         }
     }
@@ -49,7 +49,7 @@ dependencies {
     //加载控件
     implementation 'com.github.next-ara:LoadingView:1.0.0'
     //圆角控件集
-    implementation 'com.github.next-ara:RoundView:1.0.1'
+    implementation 'com.github.next-ara:RoundView:1.0.3'
     //文件辅助工具
     implementation 'com.github.next-ara:FileHelper:1.0.0'
 
