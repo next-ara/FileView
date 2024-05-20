@@ -4,20 +4,12 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <com.next.view.round.DampingReboundNestedScrollView
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_file_manage"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:recyclerViewId="@id/rv_file_manage">
-
-        <com.next.view.round.RoundRecyclerView
-            android:id="@+id/rv_file_manage"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:nestedScrollingEnabled="true"
-            android:overScrollMode="never"
-            android:scrollbars="none" />
-
-    </com.next.view.round.DampingReboundNestedScrollView>
+        android:overScrollMode="always"
+        android:scrollbars="none" />
 
     <LinearLayout
         android:id="@+id/layout_no_file_tips"
