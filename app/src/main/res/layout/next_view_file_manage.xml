@@ -4,9 +4,10 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <com.next.view.springback.SpringBackLayout
+    <com.next.view.round.RoundSpringBackLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        app:radius="@dimen/dp_16"
         app:scrollableView="@id/rv_file_manage">
 
         <androidx.recyclerview.widget.RecyclerView
@@ -16,7 +17,7 @@
             android:overScrollMode="never"
             android:scrollbars="none" />
 
-    </com.next.view.springback.SpringBackLayout>
+    </com.next.view.round.RoundSpringBackLayout>
 
     <LinearLayout
         android:id="@+id/layout_no_file_tips"
