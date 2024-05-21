@@ -15,7 +15,7 @@ afterEvaluate {
                 from components.release
                 groupId = 'com.next.view.file'
                 artifactId = 'FileView'
-                version = "1.0.1"
+                version = "1.0.2"
             }
         }
     }
@@ -44,12 +44,14 @@ android {
 }
 
 dependencies {
+    //回弹布局
+    implementation 'com.github.next-ara:SpringBackLayout:1.0.0'
     //动画控件
     implementation 'com.github.next-ara:AnimView:1.0.0'
     //加载控件
     implementation 'com.github.next-ara:LoadingView:1.0.0'
     //圆角控件集
-    implementation 'com.github.next-ara:RoundView:1.0.0'
+    implementation 'com.github.next-ara:RoundView:1.0.2'
     //文件辅助工具
     implementation 'com.github.next-ara:FileHelper:1.0.0'
 
