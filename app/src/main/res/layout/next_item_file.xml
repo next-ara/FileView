@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="@dimen/dp_64"
-    android:background="?attr/colorSecondaryContainer"
+    android:background="?colorSecondaryContainer"
     android:paddingHorizontal="@dimen/dp_7"
     app:radius="@dimen/dp_16">
 
@@ -20,7 +20,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:scaleType="centerCrop"
-            android:src="?attr/android:colorBackground" />
+            android:src="?colorSurface" />
 
     </com.next.view.anim.AnimLinearLayout>
 
@@ -42,7 +42,7 @@
             android:fontFamily="sans-serif-medium"
             android:singleLine="true"
             android:text="文件夹"
-            android:textColor="?attr/colorOnPrimaryContainer"
+            android:textColor="?colorOnPrimaryContainer"
             android:textSize="@dimen/dp_19" />
 
         <TextView
@@ -54,7 +54,7 @@
             android:ellipsize="middle"
             android:fontFamily="sans-serif-medium"
             android:singleLine="true"
-            android:textColor="?attr/colorOnPrimaryContainer"
+            android:textColor="?colorOnPrimaryContainer"
             android:textSize="@dimen/dp_12" />
 
     </LinearLayout>

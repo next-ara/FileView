@@ -40,7 +40,7 @@
             android:layout_marginTop="@dimen/dp_12"
             android:fontFamily="sans-serif-medium"
             android:text="@string/file_manage_no_file_tips"
-            android:textColor="?attr/colorOnPrimaryContainer"
+            android:textColor="?colorOnPrimaryContainer"
             android:textSize="@dimen/dp_16" />
 
     </LinearLayout>
@@ -51,8 +51,8 @@
         android:layout_height="@dimen/dp_85"
         android:layout_centerInParent="true"
         android:visibility="gone"
-        app:loading_color_0="?attr/colorOnPrimaryContainer"
-        app:loading_color_1="?attr/colorSecondary"
-        app:loading_color_2="?attr/colorPrimaryInverse" />
+        app:loading_color_0="?colorOnPrimaryContainer"
+        app:loading_color_1="?colorSecondary"
+        app:loading_color_2="?colorPrimaryInverse" />
 
 </RelativeLayout>
