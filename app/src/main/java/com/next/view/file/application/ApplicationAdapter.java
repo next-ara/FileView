@@ -99,6 +99,9 @@ public class ApplicationAdapter extends RecyclerView.Adapter<ApplicationAdapter.
     //选中模式
     private int selectMode = SelectMode.SELECT_FILE;
 
+    //图片交叉淡入过渡动画工厂对象
+    private DrawableCrossFadeFactory factory;
+
     static class ViewHolder extends RecyclerView.ViewHolder {
 
         //文件图标图片控件
@@ -123,6 +126,7 @@ public class ApplicationAdapter extends RecyclerView.Adapter<ApplicationAdapter.
     public ApplicationAdapter(Context context) {
         this.context = context;
         this.normalDrawable = this.context.getDrawable(R.drawable.next_ic_file_apk);
+        this.factory = new DrawableCrossFadeFactory.Builder().setCrossFadeEnabled(true).build();
     }
 
     @Override
@@ -238,12 +242,9 @@ public class ApplicationAdapter extends RecyclerView.Adapter<ApplicationAdapter.
         //设置文件名称
         holder.fileNameView.setText(apkInfo.getAppName());
         //设置文件图标
-        DrawableCrossFadeFactory factory =
-                new DrawableCrossFadeFactory.Builder().setCrossFadeEnabled(true).build();
-
         Glide.with(this.context)
                 .load(apkInfo.getAppIcon())
-                .transition(DrawableTransitionOptions.withCrossFade(factory))
+                .transition(DrawableTransitionOptions.withCrossFade(this.factory))
                 .placeholder(this.normalDrawable)
                 .error(this.normalDrawable)
                 .diskCacheStrategy(DiskCacheStrategy.ALL)

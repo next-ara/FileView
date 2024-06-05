@@ -102,6 +102,9 @@ public class FileManageAdapter extends RecyclerView.Adapter<FileManageAdapter.Vi
     //选中模式
     private int selectMode = SelectMode.SELECT_FILE;
 
+    //图片交叉淡入过渡动画工厂对象
+    private DrawableCrossFadeFactory factory;
+
     static class ViewHolder extends RecyclerView.ViewHolder {
 
         //文件图标图片控件
@@ -126,6 +129,7 @@ public class FileManageAdapter extends RecyclerView.Adapter<FileManageAdapter.Vi
     public FileManageAdapter(Context context) {
         this.context = context;
         this.registerIcon();
+        this.factory = new DrawableCrossFadeFactory.Builder().setCrossFadeEnabled(true).build();
     }
 
     @Override
@@ -237,13 +241,10 @@ public class FileManageAdapter extends RecyclerView.Adapter<FileManageAdapter.Vi
         //设置文件名称
         holder.fileNameView.setText(fileInfo.getFileName());
         //设置文件图标
-        DrawableCrossFadeFactory factory =
-                new DrawableCrossFadeFactory.Builder().setCrossFadeEnabled(true).build();
-
         if (fileInfo.getFileType() == FileInfo.FileType.TYPE_IMAGE || fileInfo.getFileType() == FileInfo.FileType.TYPE_VIDEO) {
             Glide.with(this.context)
                     .load(new File(fileInfo.getFilePath()))
-                    .transition(DrawableTransitionOptions.withCrossFade(factory))
+                    .transition(DrawableTransitionOptions.withCrossFade(this.factory))
                     .placeholder(this.getFileDrawable(fileInfo))
                     .error(this.getFileDrawable(fileInfo))
                     .diskCacheStrategy(DiskCacheStrategy.ALL)
@@ -252,7 +253,6 @@ public class FileManageAdapter extends RecyclerView.Adapter<FileManageAdapter.Vi
         } else {
             Glide.with(this.context)
                     .load(this.getFileDrawable(fileInfo))
-                    .transition(DrawableTransitionOptions.withCrossFade(factory))
                     .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .override(148, 148)
                     .into(holder.fileIconView);
