@@ -3,7 +3,6 @@ package com.next.view.file.manage;
 import android.annotation.SuppressLint;
 import android.content.ClipData;
 import android.content.Context;
-import android.graphics.drawable.Drawable;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -93,8 +92,8 @@ public class FileManageAdapter extends RecyclerView.Adapter<FileManageAdapter.Vi
     //搜索完成监听接口
     private OnSearchListener onSearchListener;
 
-    //文件图标对象Map
-    private HashMap<String, Drawable> fileIconList = new HashMap<>();
+    //文件图标资源IdMap
+    private HashMap<String, Integer> fileIconResIdList = new HashMap<>();
 
     //上下文
     private Context context;
@@ -245,15 +244,15 @@ public class FileManageAdapter extends RecyclerView.Adapter<FileManageAdapter.Vi
             Glide.with(this.context)
                     .load(new File(fileInfo.getFilePath()))
                     .transition(DrawableTransitionOptions.withCrossFade(this.factory))
-                    .placeholder(this.getFileDrawable(fileInfo))
-                    .error(this.getFileDrawable(fileInfo))
-                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .placeholder(this.getFileIconResId(fileInfo))
+                    .error(this.getFileIconResId(fileInfo))
+                    .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
                     .override(148, 148)
                     .into(holder.fileIconView);
         } else {
             Glide.with(this.context)
-                    .load(this.getFileDrawable(fileInfo))
-                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .load(this.getFileIconResId(fileInfo))
+                    .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
                     .override(148, 148)
                     .into(holder.fileIconView);
         }
@@ -372,14 +371,14 @@ public class FileManageAdapter extends RecyclerView.Adapter<FileManageAdapter.Vi
      * 注册文件图标
      */
     private void registerIcon() {
-        this.fileIconList.put(FileInfo.FileType.TYPE_FOLDER, this.context.getDrawable(R.drawable.next_ic_file_folder));
-        this.fileIconList.put(FileInfo.FileType.TYPE_IMAGE, this.context.getDrawable(R.drawable.next_ic_file_image));
-        this.fileIconList.put(FileInfo.FileType.TYPE_AUDIO, this.context.getDrawable(R.drawable.next_ic_file_audio));
-        this.fileIconList.put(FileInfo.FileType.TYPE_VIDEO, this.context.getDrawable(R.drawable.next_ic_file_video));
-        this.fileIconList.put(FileInfo.FileType.TYPE_DOCUMENT, this.context.getDrawable(R.drawable.next_ic_file_document));
-        this.fileIconList.put(FileInfo.FileType.TYPE_PACKAGE, this.context.getDrawable(R.drawable.next_ic_file_apk));
-        this.fileIconList.put(FileInfo.FileType.TYPE_ZIP, this.context.getDrawable(R.drawable.next_ic_file_zip));
-        this.fileIconList.put(FileInfo.FileType.TYPE_OTHER, this.context.getDrawable(R.drawable.next_ic_file_other));
+        this.fileIconResIdList.put(FileInfo.FileType.TYPE_FOLDER, R.drawable.next_ic_file_folder);
+        this.fileIconResIdList.put(FileInfo.FileType.TYPE_IMAGE, R.drawable.next_ic_file_image);
+        this.fileIconResIdList.put(FileInfo.FileType.TYPE_AUDIO, R.drawable.next_ic_file_audio);
+        this.fileIconResIdList.put(FileInfo.FileType.TYPE_VIDEO, R.drawable.next_ic_file_video);
+        this.fileIconResIdList.put(FileInfo.FileType.TYPE_DOCUMENT, R.drawable.next_ic_file_document);
+        this.fileIconResIdList.put(FileInfo.FileType.TYPE_PACKAGE, R.drawable.next_ic_file_apk);
+        this.fileIconResIdList.put(FileInfo.FileType.TYPE_ZIP, R.drawable.next_ic_file_zip);
+        this.fileIconResIdList.put(FileInfo.FileType.TYPE_OTHER, R.drawable.next_ic_file_other);
     }
 
     /**
@@ -399,18 +398,18 @@ public class FileManageAdapter extends RecyclerView.Adapter<FileManageAdapter.Vi
     }
 
     /**
-     * 获取文件图标
+     * 获取文件图标资源Id
      *
      * @param fileInfo 文件信息对象
-     * @return 图像对象
+     * @return 文件图标资源Id
      */
-    private Drawable getFileDrawable(FileInfo fileInfo) {
-        if (this.fileIconList.containsKey(fileInfo.getFileType())) {
+    private int getFileIconResId(FileInfo fileInfo) {
+        if (this.fileIconResIdList.containsKey(fileInfo.getFileType())) {
             //获取文件图标
-            return this.fileIconList.get(fileInfo.getFileType());
+            return this.fileIconResIdList.get(fileInfo.getFileType());
         }
 
-        return this.fileIconList.get(FileInfo.FileType.TYPE_OTHER);
+        return this.fileIconResIdList.get(FileInfo.FileType.TYPE_OTHER);
     }
 
     public void setFileClickListener(FileClickListener fileClickListener) {

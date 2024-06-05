@@ -2,7 +2,6 @@ package com.next.view.file.application;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.graphics.drawable.Drawable;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -93,8 +92,8 @@ public class ApplicationAdapter extends RecyclerView.Adapter<ApplicationAdapter.
     //上下文
     private Context context;
 
-    //默认图标
-    private Drawable normalDrawable;
+    //默认图标资源Id
+    private int normalDrawableResId;
 
     //选中模式
     private int selectMode = SelectMode.SELECT_FILE;
@@ -125,7 +124,7 @@ public class ApplicationAdapter extends RecyclerView.Adapter<ApplicationAdapter.
 
     public ApplicationAdapter(Context context) {
         this.context = context;
-        this.normalDrawable = this.context.getDrawable(R.drawable.next_ic_file_apk);
+        this.normalDrawableResId = R.drawable.next_ic_file_apk;
         this.factory = new DrawableCrossFadeFactory.Builder().setCrossFadeEnabled(true).build();
     }
 
@@ -245,9 +244,9 @@ public class ApplicationAdapter extends RecyclerView.Adapter<ApplicationAdapter.
         Glide.with(this.context)
                 .load(apkInfo.getAppIcon())
                 .transition(DrawableTransitionOptions.withCrossFade(this.factory))
-                .placeholder(this.normalDrawable)
-                .error(this.normalDrawable)
-                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .placeholder(this.normalDrawableResId)
+                .error(this.normalDrawableResId)
+                .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
                 .override(148, 148)
                 .into(holder.fileIconView);
     }
