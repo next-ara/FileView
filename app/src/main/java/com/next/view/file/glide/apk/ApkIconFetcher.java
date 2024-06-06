@@ -1,7 +1,7 @@
 package com.next.view.file.glide.apk;
 
 import android.content.Context;
-import android.content.pm.PackageInfo;
+import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
@@ -41,8 +41,8 @@ public class ApkIconFetcher implements DataFetcher<InputStream> {
     @Override
     public void loadData(@NonNull Priority priority, @NonNull DataCallback<? super InputStream> dataCallback) {
         try {
-            PackageInfo packageInfo = this.packageManager.getPackageArchiveInfo(this.apkInfo.getFilePath(), 0);
-            Drawable iconDrawable = this.packageManager.getApplicationIcon(packageInfo.applicationInfo);
+            ApplicationInfo applicationInfo = this.packageManager.getApplicationInfo(this.apkInfo.getPackageName(), 0);
+            Drawable iconDrawable = this.packageManager.getApplicationIcon(applicationInfo);
             BitmapDrawable bitmapDrawable = (BitmapDrawable) iconDrawable;
             Bitmap iconBitmap = bitmapDrawable.getBitmap();
             InputStream inputStream = this.bitmapToInputStream(iconBitmap);

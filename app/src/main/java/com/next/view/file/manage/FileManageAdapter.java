@@ -249,16 +249,6 @@ public class FileManageAdapter extends RecyclerView.Adapter<FileManageAdapter.Vi
                     .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
                     .override(148, 148)
                     .into(holder.fileIconView);
-        } else if (fileInfo.getFileType().equals(FileInfo.FileType.TYPE_PACKAGE)) {
-            //设置文件图标
-            Glide.with(this.context)
-                    .load(fileInfo)
-                    .transition(DrawableTransitionOptions.withCrossFade(this.factory))
-                    .placeholder(this.getFileIconResId(fileInfo))
-                    .error(this.getFileIconResId(fileInfo))
-                    .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
-                    .override(148, 148)
-                    .into(holder.fileIconView);
         } else {
             Glide.with(this.context)
                     .load(this.getFileIconResId(fileInfo))
