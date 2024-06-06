@@ -341,7 +341,6 @@ public class ApplicationView extends LinearLayout implements ApplicationAdapter.
                         apkInfo.creatFileInfoObj(file);
                         //获取详细数据
                         apkInfo.setAppName(packageInfo.applicationInfo.loadLabel(pm).toString());
-                        apkInfo.setAppIcon(packageInfo.applicationInfo.loadIcon(pm));
                         apkInfo.setPackageName(packageName);
                         this.fileInfoObjList.add(apkInfo);
                         break;
@@ -361,7 +360,6 @@ public class ApplicationView extends LinearLayout implements ApplicationAdapter.
                         apkInfo.creatFileInfoObj(file);
                         //获取详细数据
                         apkInfo.setAppName(packageInfo.applicationInfo.loadLabel(pm).toString());
-                        apkInfo.setAppIcon(packageInfo.applicationInfo.loadIcon(pm));
                         apkInfo.setPackageName(packageName);
                         this.fileInfoObjList.add(apkInfo);
                         break;

@@ -242,7 +242,7 @@ public class ApplicationAdapter extends RecyclerView.Adapter<ApplicationAdapter.
         holder.fileNameView.setText(apkInfo.getAppName());
         //设置文件图标
         Glide.with(this.context)
-                .load(apkInfo.getAppIcon())
+                .load(apkInfo)
                 .transition(DrawableTransitionOptions.withCrossFade(this.factory))
                 .placeholder(this.normalDrawableResId)
                 .error(this.normalDrawableResId)
