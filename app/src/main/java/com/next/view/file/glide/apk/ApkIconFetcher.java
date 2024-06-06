@@ -4,8 +4,11 @@ import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.PixelFormat;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.text.TextUtils;
 
 import androidx.annotation.NonNull;
 
@@ -41,10 +44,27 @@ public class ApkIconFetcher implements DataFetcher<InputStream> {
     @Override
     public void loadData(@NonNull Priority priority, @NonNull DataCallback<? super InputStream> dataCallback) {
         try {
-            ApplicationInfo applicationInfo = this.packageManager.getApplicationInfo(this.apkInfo.getPackageName(), 0);
+            ApplicationInfo applicationInfo;
+
+            if (TextUtils.isEmpty(this.apkInfo.getPackageName())) {
+                applicationInfo = this.packageManager.getPackageArchiveInfo(this.apkInfo.getFilePath(), 0).applicationInfo;
+            } else {
+                applicationInfo = this.packageManager.getApplicationInfo(this.apkInfo.getPackageName(), 0);
+            }
+
             Drawable iconDrawable = this.packageManager.getApplicationIcon(applicationInfo);
-            BitmapDrawable bitmapDrawable = (BitmapDrawable) iconDrawable;
-            Bitmap iconBitmap = bitmapDrawable.getBitmap();
+            Bitmap iconBitmap;
+
+            if (iconDrawable instanceof BitmapDrawable bitmapDrawable) {
+                iconBitmap = bitmapDrawable.getBitmap();
+            } else {
+                iconBitmap = Bitmap.createBitmap(iconDrawable.getIntrinsicWidth(), iconDrawable.getIntrinsicHeight(),
+                        iconDrawable.getOpacity() != PixelFormat.OPAQUE ? Bitmap.Config.ARGB_8888 : Bitmap.Config.RGB_565);
+                Canvas canvas = new Canvas(iconBitmap);
+                iconDrawable.setBounds(0, 0, iconDrawable.getIntrinsicWidth(), iconDrawable.getIntrinsicHeight());
+                iconDrawable.draw(canvas);
+            }
+
             InputStream inputStream = this.bitmapToInputStream(iconBitmap);
             dataCallback.onDataReady(inputStream);
         } catch (Exception e) {

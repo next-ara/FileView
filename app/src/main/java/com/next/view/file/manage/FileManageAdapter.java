@@ -240,9 +240,18 @@ public class FileManageAdapter extends RecyclerView.Adapter<FileManageAdapter.Vi
         //设置文件名称
         holder.fileNameView.setText(fileInfo.getFileName());
         //设置文件图标
-        if (fileInfo.getFileType().equals(FileInfo.FileType.TYPE_IMAGE) || fileInfo.getFileType().equals(FileInfo.FileType.TYPE_VIDEO)) {
+        if (FileInfo.FileType.TYPE_IMAGE.equals(fileInfo.getFileType()) || FileInfo.FileType.TYPE_VIDEO.equals(fileInfo.getFileType())) {
             Glide.with(this.context)
                     .load(new File(fileInfo.getFilePath()))
+                    .transition(DrawableTransitionOptions.withCrossFade(this.factory))
+                    .placeholder(this.getFileIconResId(fileInfo))
+                    .error(this.getFileIconResId(fileInfo))
+                    .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
+                    .override(148, 148)
+                    .into(holder.fileIconView);
+        } else if (FileInfo.FileType.TYPE_PACKAGE.equals(fileInfo.getFileType())) {
+            Glide.with(this.context)
+                    .load(fileInfo)
                     .transition(DrawableTransitionOptions.withCrossFade(this.factory))
                     .placeholder(this.getFileIconResId(fileInfo))
                     .error(this.getFileIconResId(fileInfo))
