@@ -1,6 +1,7 @@
 package com.next.view.file.glide.apk;
 
 import android.content.Context;
+import android.text.TextUtils;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -31,11 +32,11 @@ public class ApkIconModelLoader implements ModelLoader<ApkInfo, InputStream> {
     @Nullable
     @Override
     public LoadData<InputStream> buildLoadData(@NonNull ApkInfo apkInfo, int i, int i1, @NonNull Options options) {
-        return new LoadData<>(new ObjectKey(apkInfo.getFilePath()), new ApkIconFetcher(apkInfo, this.context));
+        return new LoadData<>(new ObjectKey(apkInfo.getPackageName()), new ApkIconFetcher(apkInfo, this.context));
     }
 
     @Override
     public boolean handles(@NonNull ApkInfo apkInfo) {
-        return true;
+        return !TextUtils.isEmpty(apkInfo.getPackageName());
     }
 }

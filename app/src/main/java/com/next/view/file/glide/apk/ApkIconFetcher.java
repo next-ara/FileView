@@ -8,7 +8,6 @@ import android.graphics.Canvas;
 import android.graphics.PixelFormat;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
-import android.text.TextUtils;
 
 import androidx.annotation.NonNull;
 
@@ -44,13 +43,7 @@ public class ApkIconFetcher implements DataFetcher<InputStream> {
     @Override
     public void loadData(@NonNull Priority priority, @NonNull DataCallback<? super InputStream> dataCallback) {
         try {
-            ApplicationInfo applicationInfo;
-
-            if (TextUtils.isEmpty(this.apkInfo.getPackageName())) {
-                applicationInfo = this.packageManager.getPackageArchiveInfo(this.apkInfo.getFilePath(), 0).applicationInfo;
-            } else {
-                applicationInfo = this.packageManager.getApplicationInfo(this.apkInfo.getPackageName(), 0);
-            }
+            ApplicationInfo applicationInfo = this.packageManager.getApplicationInfo(this.apkInfo.getPackageName(), 0);
 
             Drawable iconDrawable = this.packageManager.getApplicationIcon(applicationInfo);
             Bitmap iconBitmap;
