@@ -25,7 +25,10 @@ public class FileInfo {
     private String fileName;
 
     //最后修改时间
-    private String lastModified;
+    private long lastModified;
+
+    //最后修改时间文本
+    private String lastModifiedText;
 
     //文件大小
     private String fileSize;
@@ -50,12 +53,20 @@ public class FileInfo {
         this.fileName = fileName;
     }
 
-    public String getLastModified() {
+    public long getLastModified() {
         return lastModified;
     }
 
-    public void setLastModified(String lastModified) {
+    public void setLastModified(long lastModified) {
         this.lastModified = lastModified;
+    }
+
+    public String getLastModifiedText() {
+        return lastModifiedText;
+    }
+
+    public void setLastModifiedText(String lastModifiedText) {
+        this.lastModifiedText = lastModifiedText;
     }
 
     public String getFileSize() {

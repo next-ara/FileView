@@ -17,7 +17,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.SimpleItemAnimator;
 
-import com.next.module.file2.File2;
 import com.next.module.file2.tool.FileListFactory;
 import com.next.module.file2.tool.FileLoadException;
 import com.next.view.file.R;
@@ -25,7 +24,6 @@ import com.next.view.file.info.FileInfo;
 import com.next.view.file.tool.DeviceTool;
 import com.next.view.loading.LoadingView;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Objects;
 
@@ -83,23 +81,14 @@ public class FileManageView extends LinearLayout {
     //文件管理适配对象
     private FileManageAdapter adapterObj;
 
-    //是否显示隐藏文件
-    private boolean isShowHideFile = false;
-
     //文件加载监听接口
     private OnFileLoadListener onFileLoadListener;
 
     //主线程Handler
     private Handler mainHandler;
 
-    //文件列表工厂对象
-    private FileListFactory factory;
-
-    //父文件对象
-    private File2 parentFile;
-
-    //当前路径
-    private String nowPath;
+    //获取文件列表工具对象
+    private GetFileListTool getFileListTool;
 
     public FileManageView(@NonNull Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
@@ -150,52 +139,6 @@ public class FileManageView extends LinearLayout {
     }
 
     /**
-     * 搜索
-     *
-     * @param charSequence 文本
-     */
-    public void search(CharSequence charSequence) {
-        if (this.adapterObj != null) {
-            this.adapterObj.getFilter().filter(charSequence);
-        }
-    }
-
-    /**
-     * 文件2数组转文件信息对象列表
-     *
-     * @param file2List 文件2对象列表
-     * @return 文件信息对象列表
-     */
-    private ArrayList<FileInfo> file2ListToFileInfoList(File2[] file2List) {
-        ArrayList<FileInfo> fileInfoList = new ArrayList<>();
-
-        for (File2 file2 : file2List) {
-            FileInfo fileInfo = new FileInfo();
-            fileInfo.setFileName(file2.getName());
-            fileInfo.setFileSize(file2.length());
-            fileInfo.setDirectory(file2.isDirectory());
-            fileInfo.setLastModified(new SimpleDateFormat("yyyy/MM/dd HH:mm").format(file2.lastModified()));
-            fileInfo.setSelectType(FileInfo.SelectType.SELECT_TYPE_NONE);
-            fileInfo.setFileType(file2.getType());
-            fileInfo.setFile2(file2);
-        }
-
-        return fileInfoList;
-    }
-
-    /**
-     * 设置搜索监听
-     */
-    private void setOnSearchListener() {
-        this.adapterObj.setOnSearchListener(() -> {
-            //设置没有文件提示
-            this.setNoFileTips();
-            //发送文件加载监听
-            this.sendFileLoadListener();
-        });
-    }
-
-    /**
      * 初始化控件
      */
     private void initView() {
@@ -212,8 +155,8 @@ public class FileManageView extends LinearLayout {
     private void initData() {
         //初始化主线程Handler
         this.mainHandler = this.getMainHandler();
-        //初始化文件列表工厂对象
-        this.factory = new FileListFactory();
+        //初始化获取文件列表工具对象
+        this.getFileListTool = new GetFileListTool();
         //初始化文件管理适配器对象
         this.adapterObj = new FileManageAdapter(this.getContext());
         this.adapterObj.setFileClickListener(new FileManageAdapter.FileClickListener() {
@@ -250,7 +193,6 @@ public class FileManageView extends LinearLayout {
         });
 
         this.fileManageView.setAdapter(this.adapterObj);
-        this.setOnSearchListener();
         ((SimpleItemAnimator) Objects.requireNonNull(this.fileManageView.getItemAnimator())).setSupportsChangeAnimations(false);
     }
 
