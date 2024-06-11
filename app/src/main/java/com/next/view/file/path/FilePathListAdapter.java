@@ -8,7 +8,7 @@ import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.next.module.filehelper.FileManageTool;
+import com.next.module.file2.tool.FilePathTool;
 import com.next.view.file.R;
 
 import java.io.File;
@@ -46,7 +46,7 @@ public class FilePathListAdapter extends RecyclerView.Adapter<FilePathListAdapte
     private ArrayList<String> filePathList = new ArrayList<>();
 
     //当前文件路径
-    private String nowPath = FileManageTool.Path.ROOT;
+    private String nowPath = FilePathTool.ROOT_PATH;
 
     //文件路径点击监听接口
     private FilePathClickListener filePathClickListener;
@@ -90,7 +90,7 @@ public class FilePathListAdapter extends RecyclerView.Adapter<FilePathListAdapte
     private void getPathList(String path) {
         this.filePathList.clear();
 
-        for (File file = new File(path); !file.getPath().equals(FileManageTool.Path.ROOT); file = file.getParentFile()) {
+        for (File file = new File(path); !file.getPath().equals(FilePathTool.ROOT_PATH); file = file.getParentFile()) {
             if (file.isDirectory()) {
                 this.filePathList.add(file.getName());
             }
@@ -107,7 +107,7 @@ public class FilePathListAdapter extends RecyclerView.Adapter<FilePathListAdapte
      * @return 路径
      */
     private String getPath(int index) {
-        File file = new File(FileManageTool.Path.ROOT);
+        File file = new File(FilePathTool.ROOT_PATH);
 
         for (int i = 1; i <= index && index < this.filePathList.size(); i++) {
             if (!file.exists()) {
