@@ -53,7 +53,7 @@ dependencies {
     //圆角控件集
     implementation 'com.github.next-ara:RoundView:1.0.3'
     //File2
-    implementation 'com.github.next-ara:File2:1.0.0'
+    implementation 'com.github.next-ara:File2:1.0.1'
 
     implementation 'com.github.bumptech.glide:glide:4.16.0'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.16.0'

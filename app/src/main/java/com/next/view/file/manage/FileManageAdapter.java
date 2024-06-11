@@ -67,7 +67,7 @@ public class FileManageAdapter extends RecyclerView.Adapter<FileManageAdapter.Vi
     private ArrayList<FileInfo> filterFileInfoList = new ArrayList<>();
 
     //文件点击监听接口
-    private FileClickListener fileClickListener;
+    private ArrayList<FileClickListener> fileClickListener = new ArrayList<>();
 
     //搜索完成监听接口
     private OnSearchListener onSearchListener;
@@ -186,6 +186,25 @@ public class FileManageAdapter extends RecyclerView.Adapter<FileManageAdapter.Vi
     }
 
     /**
+     * 设置文件点击监听
+     *
+     * @param fileClickListener 文件点击监听接口
+     */
+    public void setFileClickListener(FileClickListener fileClickListener) {
+        this.fileClickListener.clear();
+        this.fileClickListener.add(fileClickListener);
+    }
+
+    /**
+     * 添加文件点击监听
+     *
+     * @param fileClickListener 文件点击监听接口
+     */
+    public void addFileClickListener(FileClickListener fileClickListener) {
+        this.fileClickListener.add(fileClickListener);
+    }
+
+    /**
      * 设置文件基础信息
      *
      * @param holder
@@ -249,17 +268,19 @@ public class FileManageAdapter extends RecyclerView.Adapter<FileManageAdapter.Vi
      */
     private void setFileClick(ViewHolder holder, FileInfo fileInfo) {
         if (this.fileClickListener != null) {
-            holder.itemView.setOnClickListener(view -> this.fileClickListener.onClick(fileInfo));
+            holder.itemView.setOnClickListener(view -> {
+                for (FileClickListener fileClickListener : this.fileClickListener) {
+                    fileClickListener.onClick(fileInfo);
+                }
+            });
 
             holder.itemView.setOnLongClickListener(view -> {
-                this.fileClickListener.onLongClick(fileInfo);
+                for (FileClickListener fileClickListener : this.fileClickListener) {
+                    fileClickListener.onLongClick(fileInfo);
+                }
                 return true;
             });
         }
-    }
-
-    public void setFileClickListener(FileClickListener fileClickListener) {
-        this.fileClickListener = fileClickListener;
     }
 
     public ArrayList<FileInfo> getFileInfoList() {

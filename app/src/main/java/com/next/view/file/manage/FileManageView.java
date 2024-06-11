@@ -20,6 +20,7 @@ import androidx.recyclerview.widget.SimpleItemAnimator;
 
 import com.next.module.file2.File2;
 import com.next.module.file2.tool.FileLoadException;
+import com.next.module.file2.tool.FilePathTool;
 import com.next.view.file.R;
 import com.next.view.file.info.FileInfo;
 import com.next.view.file.tool.DeviceTool;
@@ -214,6 +215,15 @@ public class FileManageView extends LinearLayout {
     }
 
     /**
+     * 添加文件点击监听接口
+     *
+     * @param fileClickListenerObj 文件点击监听接口
+     */
+    public void addFileClickListener(FileManageAdapter.FileClickListener fileClickListenerObj) {
+        this.adapterObj.addFileClickListener(fileClickListenerObj);
+    }
+
+    /**
      * 显示加载中视图
      */
     private void showLoading() {
@@ -290,7 +300,8 @@ public class FileManageView extends LinearLayout {
         this.getFileListTool = new GetFileListTool();
         //初始化文件管理适配器对象
         this.adapterObj = new FileManageAdapter(this.getContext());
-        this.adapterObj.setFileClickListener(new FileManageAdapter.FileClickListener() {
+        //添加文件点击监听
+        this.addFileClickListener(new FileManageAdapter.FileClickListener() {
             @Override
             public void onClick(FileInfo fileInfo) {
                 FileManageView.this.itemClick(fileInfo);
@@ -359,7 +370,8 @@ public class FileManageView extends LinearLayout {
      */
     private void unSelectModeItemClick(FileInfo fileInfo) {
         if (fileInfo.isDirectory()) {
-
+            String path = FilePathTool.getChildPath(this.getFileListTool.getNowPath(), fileInfo.getFileName());
+            this.loadPath(path);
         }
     }
 
@@ -369,7 +381,10 @@ public class FileManageView extends LinearLayout {
      * @param fileInfo 文件信息对象
      */
     private void itemLongClick(FileInfo fileInfo) {
-
+        if (this.selectMode == GetFileListTool.SelectMode.SELECT_CLOSE && !fileInfo.isDirectory()) {
+            this.selectMode = GetFileListTool.SelectMode.SELECT_FILE;
+            this.refreshPath();
+        }
     }
 
     /**
