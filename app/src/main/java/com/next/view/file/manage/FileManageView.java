@@ -17,7 +17,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.SimpleItemAnimator;
 
-import com.next.module.file2.tool.FileListFactory;
 import com.next.module.file2.tool.FileLoadException;
 import com.next.view.file.R;
 import com.next.view.file.info.FileInfo;
@@ -112,10 +111,6 @@ public class FileManageView extends LinearLayout {
         new Thread(() -> {
             try {
                 ArrayList<FileInfo> fileInfoObjList = this.getFileListTool.getFileInfoList(path, this.isShowHideFile, this.sortMode, this.showMode, this.selectMode);
-
-                FileListFactory.FileListInfo fileListInfo = this.factory.getFileList(path);
-                this.parentFile = fileListInfo.getParentFile();
-                ArrayList<FileInfo> fileInfoObjList = this.file2ListToFileInfoList(fileListInfo.getChildFileList());
                 this.adapterObj.setFileInfoList(fileInfoObjList);
                 this.mainHandler.post(() -> {
                     this.adapterObj.notifyDataSetChanged();
@@ -127,6 +122,36 @@ public class FileManageView extends LinearLayout {
                 });
             }
         }).start();
+    }
+
+    /**
+     * 刷新列表
+     */
+    public void refreshPath() {
+        new Thread(() -> {
+            try {
+                String path = this.getFileListTool.getNowPath();
+                ArrayList<FileInfo> fileInfoObjList = this.getFileListTool.getFileInfoList(path, this.isShowHideFile, this.sortMode, this.showMode, this.selectMode);
+                this.adapterObj.setFileInfoList(fileInfoObjList);
+                this.mainHandler.post(() -> {
+                    this.adapterObj.notifyDataSetChanged();
+                    this.sendLoadComplete();
+                });
+            } catch (FileLoadException e) {
+                this.mainHandler.post(() -> {
+                    this.sendLoadError(e);
+                });
+            }
+        }).start();
+    }
+
+    /**
+     * 获取当前路径
+     *
+     * @return 当前路径
+     */
+    public String getNowPath() {
+        return this.getFileListTool.getNowPath();
     }
 
     /**
@@ -233,5 +258,37 @@ public class FileManageView extends LinearLayout {
         if (this.onFileLoadListener != null) {
             this.onFileLoadListener.onLoadError(e);
         }
+    }
+
+    public int getSelectMode() {
+        return selectMode;
+    }
+
+    public void setSelectMode(int selectMode) {
+        this.selectMode = selectMode;
+    }
+
+    public int getSortMode() {
+        return sortMode;
+    }
+
+    public void setSortMode(int sortMode) {
+        this.sortMode = sortMode;
+    }
+
+    public int getShowMode() {
+        return showMode;
+    }
+
+    public void setShowMode(int showMode) {
+        this.showMode = showMode;
+    }
+
+    public boolean isShowHideFile() {
+        return isShowHideFile;
+    }
+
+    public void setShowHideFile(boolean showHideFile) {
+        isShowHideFile = showHideFile;
     }
 }
