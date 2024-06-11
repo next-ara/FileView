@@ -94,7 +94,7 @@ public class GetFileListTool {
             FileListFactory.FileListInfo fileListInfo = this.factory.getFileList(path);
             this.parentFile = fileListInfo.getParentFile();
             File2[] file2s = fileListInfo.getChildFileList();
-            this.fileInfoList = this.file2ListToFileInfoList(file2s, selectMode);
+            this.fileInfoList = this.file2ListToFileInfoList(file2s);
             list.addAll(this.fileInfoList);
         }
 
@@ -103,19 +103,33 @@ public class GetFileListTool {
             list = (ArrayList<FileInfo>) list.stream().filter(fileInfo -> this.isFilter(fileInfo, isShowHideFile, showMode)).collect(Collectors.toList());
             //排序
             FileSortTool.sort(list, sortMode);
+            //设置选择模式
+            this.setItemSelectMode(list, selectMode);
         }
 
         return list;
     }
 
     /**
+     * 设置选择模式
+     *
+     * @param list       文件信息对象列表
+     * @param selectMode 选择模式
+     */
+    private void setItemSelectMode(ArrayList<FileInfo> list, int selectMode) {
+        for (FileInfo fileInfo : list) {
+            //设置选择模式
+            this.setSelectMode(fileInfo, selectMode);
+        }
+    }
+
+    /**
      * 文件2数组转文件信息对象列表
      *
-     * @param file2List  文件2对象列表
-     * @param selectMode 选择模式
+     * @param file2List 文件2对象列表
      * @return 文件信息对象列表
      */
-    private ArrayList<FileInfo> file2ListToFileInfoList(File2[] file2List, int selectMode) {
+    private ArrayList<FileInfo> file2ListToFileInfoList(File2[] file2List) {
         ArrayList<FileInfo> fileInfoList = new ArrayList<>();
 
         for (File2 file2 : file2List) {
@@ -126,9 +140,8 @@ public class GetFileListTool {
             fileInfo.setLastModified(file2.lastModified());
             fileInfo.setLastModifiedText(new SimpleDateFormat("yyyy/MM/dd HH:mm").format(file2.lastModified()));
             fileInfo.setFileType(file2.getType());
+            fileInfo.setSelectType(FileInfo.SelectType.SELECT_TYPE_NONE);
             fileInfo.setFile2(file2);
-            //设置选择模式
-            this.setSelectMode(fileInfo, selectMode);
             fileInfoList.add(fileInfo);
         }
 
