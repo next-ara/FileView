@@ -168,6 +168,10 @@ public class FileManageView extends LinearLayout {
      * @return 是否返回上一级路径
      */
     public boolean backLastPath() {
+        if (this.selectMode != GetFileListTool.SelectMode.SELECT_CLOSE) {
+            return false;
+        }
+
         String nowPath = this.getFileListTool.getNowPath();
         if (FilePathTool.ROOT_PATH.equals(nowPath)) {
             return false;
@@ -402,8 +406,14 @@ public class FileManageView extends LinearLayout {
      */
     private void itemLongClick(FileInfo fileInfo) {
         if (this.selectMode == GetFileListTool.SelectMode.SELECT_CLOSE && !fileInfo.isDirectory()) {
+            //设置选择模式
             this.selectMode = GetFileListTool.SelectMode.SELECT_FILE;
-            this.refreshPath();
+            ArrayList<FileInfo> fileInfoList = this.adapterObj.getFileInfoList();
+            this.getFileListTool.setItemSelectMode(fileInfoList, this.selectMode);
+            fileInfo.setSelectType(FileInfo.SelectType.SELECT_TYPE_SELECT);
+            for (int i = 0; i < fileInfoList.size(); i++) {
+                this.adapterObj.notifyItemChanged(i);
+            }
         }
     }
 

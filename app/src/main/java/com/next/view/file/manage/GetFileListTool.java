@@ -116,7 +116,7 @@ public class GetFileListTool {
      * @param list       文件信息对象列表
      * @param selectMode 选择模式
      */
-    private void setItemSelectMode(ArrayList<FileInfo> list, int selectMode) {
+    public void setItemSelectMode(ArrayList<FileInfo> list, int selectMode) {
         for (FileInfo fileInfo : list) {
             //设置选择模式
             this.setSelectMode(fileInfo, selectMode);
