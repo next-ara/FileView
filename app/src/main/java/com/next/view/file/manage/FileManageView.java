@@ -477,4 +477,12 @@ public class FileManageView extends LinearLayout {
     public void setShowHideFile(boolean showHideFile) {
         isShowHideFile = showHideFile;
     }
+
+    public OnFileLoadListener getOnFileLoadListener() {
+        return onFileLoadListener;
+    }
+
+    public void setOnFileLoadListener(OnFileLoadListener onFileLoadListener) {
+        this.onFileLoadListener = onFileLoadListener;
+    }
 }
