@@ -163,6 +163,21 @@ public class FileManageView extends LinearLayout {
     }
 
     /**
+     * 返回上一级路径
+     *
+     * @return 是否返回上一级路径
+     */
+    public boolean backLastPath() {
+        String nowPath = this.getFileListTool.getNowPath();
+        if (FilePathTool.ROOT_PATH.equals(nowPath)) {
+            return false;
+        }
+
+        this.loadPath(FilePathTool.getParentPath(nowPath));
+        return true;
+    }
+
+    /**
      * 设置文件选择类型
      *
      * @param isSelect 是否选择
@@ -227,11 +242,9 @@ public class FileManageView extends LinearLayout {
      * 显示加载中视图
      */
     private void showLoading() {
-        this.mainHandler.post(() -> {
-            this.loadingView.setVisibility(VISIBLE);
-            this.noFileTipsView.setVisibility(GONE);
-            this.fileManageView.setVisibility(GONE);
-        });
+        this.loadingView.setVisibility(VISIBLE);
+        this.noFileTipsView.setVisibility(GONE);
+        this.adapterObj.clear();
     }
 
     /**
@@ -240,7 +253,6 @@ public class FileManageView extends LinearLayout {
     private void closeLoading() {
         this.loadingView.setVisibility(GONE);
         this.noFileTipsView.setVisibility(GONE);
-        this.adapterObj.clear();
 
         if (this.adapterObj.getFileInfoList().isEmpty()) {
             this.showNoTips(this.getString(R.string.file_manage_no_file_tips));
@@ -255,7 +267,6 @@ public class FileManageView extends LinearLayout {
     private void closeLoading(FileLoadException e) {
         this.loadingView.setVisibility(GONE);
         this.noFileTipsView.setVisibility(GONE);
-        this.adapterObj.clear();
 
         if (this.adapterObj.getFileInfoList().isEmpty()) {
             String tips;

@@ -129,6 +129,7 @@ public class GetFileListTool {
             fileInfo.setFile2(file2);
             //设置选择模式
             this.setSelectMode(fileInfo, selectMode);
+            fileInfoList.add(fileInfo);
         }
 
         return fileInfoList;
