@@ -257,7 +257,16 @@ public class FileManageView extends LinearLayout {
         this.noFileTipsView.setVisibility(GONE);
         this.adapterObj.clear();
 
-        this.showNoTips(this.getString(R.string.file_manage_limit_tips));
+        if (this.adapterObj.getFileInfoList().isEmpty()) {
+            String tips;
+            switch (e.getErrorCode()) {
+                case FileLoadException.ErrorCode.ERROR_CODE_NO_PERMISSION ->
+                        tips = this.getString(R.string.file_manage_limit_tips);
+                default -> tips = this.getString(R.string.file_manage_no_file_tips);
+            }
+
+            this.showNoTips(tips);
+        }
     }
 
     /**
