@@ -165,6 +165,18 @@ public class FileManageAdapter extends RecyclerView.Adapter<FileManageAdapter.Vi
     }
 
     /**
+     * 通知数据更新
+     *
+     * @param fileInfo 文件信息对象
+     */
+    public void notifyItemChanged(FileInfo fileInfo) {
+        int index = this.filterFileInfoList.indexOf(fileInfo);
+        if (index >= 0) {
+            this.notifyItemChanged(index);
+        }
+    }
+
+    /**
      * 设置文件基础信息
      *
      * @param holder

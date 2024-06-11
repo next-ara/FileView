@@ -147,6 +147,31 @@ public class FileManageView extends LinearLayout {
     }
 
     /**
+     * 设置文件选择类型
+     *
+     * @param isSelect 是否选择
+     * @param fileInfo 文件信息对象
+     */
+    public void setItemSelectType(boolean isSelect, FileInfo fileInfo) {
+        if (this.selectMode == GetFileListTool.SelectMode.SELECT_CLOSE) {
+            return;
+        }
+
+        if (this.selectMode == GetFileListTool.SelectMode.SELECT_FILE && fileInfo.isDirectory()) {
+            return;
+        }
+
+        if (this.selectMode == GetFileListTool.SelectMode.SELECT_FOLDER && !fileInfo.isDirectory()) {
+            return;
+        }
+
+        //设置选择类型
+        fileInfo.setSelectType(isSelect ? FileInfo.SelectType.SELECT_TYPE_SELECT : FileInfo.SelectType.SELECT_TYPE_UNSELECT);
+        //通知数据更新
+        this.adapterObj.notifyItemChanged(fileInfo);
+    }
+
+    /**
      * 获取当前路径
      *
      * @return 当前路径
@@ -171,6 +196,17 @@ public class FileManageView extends LinearLayout {
      */
     public void setFileClickListener(FileManageAdapter.FileClickListener fileClickListenerObj) {
         this.adapterObj.setFileClickListener(fileClickListenerObj);
+    }
+
+    /**
+     * 显示加载中视图
+     */
+    private void showLoading() {
+        this.mainHandler.post(() -> {
+            this.loadingView.setVisibility(VISIBLE);
+            this.noFileTipsView.setVisibility(GONE);
+            this.fileManageView.setVisibility(GONE);
+        });
     }
 
     /**
