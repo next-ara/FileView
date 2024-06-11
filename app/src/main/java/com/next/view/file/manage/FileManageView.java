@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.StringRes;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -109,16 +110,23 @@ public class FileManageView extends LinearLayout {
      * 加载路径
      */
     public void loadPath(String path) {
+        //显示加载
+        this.showLoading();
+
         new Thread(() -> {
             try {
                 ArrayList<FileInfo> fileInfoObjList = this.getFileListTool.getFileInfoList(path, this.isShowHideFile, this.sortMode, this.showMode, this.selectMode);
                 this.adapterObj.setFileInfoList(fileInfoObjList);
                 this.mainHandler.post(() -> {
+                    //关闭加载
+                    this.closeLoading();
                     this.adapterObj.notifyDataSetChanged();
                     this.sendLoadComplete();
                 });
             } catch (FileLoadException e) {
                 this.mainHandler.post(() -> {
+                    //关闭加载
+                    this.closeLoading(e);
                     this.sendLoadError(e);
                 });
             }
@@ -129,17 +137,24 @@ public class FileManageView extends LinearLayout {
      * 刷新列表
      */
     public void refreshPath() {
+        //显示加载
+        this.showLoading();
+
         new Thread(() -> {
             try {
                 String path = this.getFileListTool.getNowPath();
                 ArrayList<FileInfo> fileInfoObjList = this.getFileListTool.getFileInfoList(path, this.isShowHideFile, this.sortMode, this.showMode, this.selectMode);
                 this.adapterObj.setFileInfoList(fileInfoObjList);
                 this.mainHandler.post(() -> {
+                    //关闭加载
+                    this.closeLoading();
                     this.adapterObj.notifyDataSetChanged();
                     this.sendLoadComplete();
                 });
             } catch (FileLoadException e) {
                 this.mainHandler.post(() -> {
+                    //关闭加载
+                    this.closeLoading(e);
                     this.sendLoadError(e);
                 });
             }
@@ -210,6 +225,51 @@ public class FileManageView extends LinearLayout {
     }
 
     /**
+     * 关闭加载中视图
+     */
+    private void closeLoading() {
+        this.loadingView.setVisibility(GONE);
+        this.noFileTipsView.setVisibility(GONE);
+        this.adapterObj.clear();
+
+        if (this.adapterObj.getFileInfoList().isEmpty()) {
+            this.showNoTips(this.getString(R.string.file_manage_no_file_tips));
+        }
+    }
+
+    /**
+     * 关闭加载中视图
+     *
+     * @param e 文件加载异常
+     */
+    private void closeLoading(FileLoadException e) {
+        this.loadingView.setVisibility(GONE);
+        this.noFileTipsView.setVisibility(GONE);
+        this.adapterObj.clear();
+
+        this.showNoTips(this.getString(R.string.file_manage_limit_tips));
+    }
+
+    /**
+     * 显示没有文件提示视图
+     */
+    private void showNoTips(String tips) {
+        this.noFileTipsView.setVisibility(VISIBLE);
+        this.noFileTextView.setText(tips);
+        this.noFileTextView.setVisibility(this.isNeedScreenAdaptation() ? GONE : VISIBLE);
+    }
+
+    /**
+     * 获取字符串
+     *
+     * @param stringResId 字符串资源Id
+     * @return 字符串
+     */
+    private String getString(@StringRes int stringResId) {
+        return this.getContext().getString(stringResId);
+    }
+
+    /**
      * 初始化控件
      */
     private void initView() {
@@ -233,12 +293,12 @@ public class FileManageView extends LinearLayout {
         this.adapterObj.setFileClickListener(new FileManageAdapter.FileClickListener() {
             @Override
             public void onClick(FileInfo fileInfo) {
-
+                FileManageView.this.itemClick(fileInfo);
             }
 
             @Override
             public void onLongClick(FileInfo fileInfo) {
-
+                FileManageView.this.itemLongClick(fileInfo);
             }
         });
 
@@ -265,6 +325,51 @@ public class FileManageView extends LinearLayout {
 
         this.fileManageView.setAdapter(this.adapterObj);
         ((SimpleItemAnimator) Objects.requireNonNull(this.fileManageView.getItemAnimator())).setSupportsChangeAnimations(false);
+    }
+
+    /**
+     * 文件点击事件
+     *
+     * @param fileInfo 文件信息对象
+     */
+    private void itemClick(FileInfo fileInfo) {
+        if (this.selectMode == GetFileListTool.SelectMode.SELECT_CLOSE) {
+            //未选择模式文件点击事件
+            this.unSelectModeItemClick(fileInfo);
+        } else {
+            //选择模式文件点击事件
+            this.selectModeItemClick(fileInfo);
+        }
+    }
+
+    /**
+     * 选择模式文件点击事件
+     *
+     * @param fileInfo 文件信息对象
+     */
+    private void selectModeItemClick(FileInfo fileInfo) {
+        //设置文件选择类型
+        this.setItemSelectType(fileInfo.getSelectType() != FileInfo.SelectType.SELECT_TYPE_SELECT, fileInfo);
+    }
+
+    /**
+     * 未选择模式文件点击事件
+     *
+     * @param fileInfo
+     */
+    private void unSelectModeItemClick(FileInfo fileInfo) {
+        if (fileInfo.isDirectory()) {
+
+        }
+    }
+
+    /**
+     * 文件长按事件
+     *
+     * @param fileInfo 文件信息对象
+     */
+    private void itemLongClick(FileInfo fileInfo) {
+
     }
 
     /**
