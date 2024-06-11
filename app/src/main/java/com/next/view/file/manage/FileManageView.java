@@ -36,18 +36,6 @@ import java.util.Objects;
  */
 public class FileManageView extends LinearLayout {
 
-    //选择模式
-    public final class SelectMode {
-        //关闭选中模式
-        public static final int SELECT_CLOSE = -1;
-        //支持所有文件选中
-        public static final int SELECT_ALL = 0;
-        //仅文件夹支持选中
-        public static final int SELECT_FOLDER = 1;
-        //仅文件支持选中
-        public static final int SELECT_FILE = 2;
-    }
-
     //文件加载监听接口
     public interface OnFileLoadListener {
 
@@ -90,6 +78,18 @@ public class FileManageView extends LinearLayout {
     //获取文件列表工具对象
     private GetFileListTool getFileListTool;
 
+    //选择模式
+    private int selectMode = GetFileListTool.SelectMode.SELECT_CLOSE;
+
+    //排序模式
+    private int sortMode = GetFileListTool.SortMode.NAME_FORWARD;
+
+    //显示模式
+    private int showMode = GetFileListTool.ShowMode.SHOW_ALL;
+
+    //是否显示隐藏文件
+    private boolean isShowHideFile = false;
+
     public FileManageView(@NonNull Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
         this.init();
@@ -109,10 +109,10 @@ public class FileManageView extends LinearLayout {
      * 加载路径
      */
     public void loadPath(String path) {
-        this.nowPath = path;
-
         new Thread(() -> {
             try {
+                ArrayList<FileInfo> fileInfoObjList = this.getFileListTool.getFileInfoList(path, this.isShowHideFile, this.sortMode, this.showMode, this.selectMode);
+
                 FileListFactory.FileListInfo fileListInfo = this.factory.getFileList(path);
                 this.parentFile = fileListInfo.getParentFile();
                 ArrayList<FileInfo> fileInfoObjList = this.file2ListToFileInfoList(fileListInfo.getChildFileList());

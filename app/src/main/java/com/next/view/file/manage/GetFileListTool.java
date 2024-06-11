@@ -20,6 +20,18 @@ import java.util.stream.Collectors;
  */
 public class GetFileListTool {
 
+    //选择模式
+    public final class SelectMode {
+        //关闭选中模式
+        public static final int SELECT_CLOSE = -1;
+        //支持所有文件选中
+        public static final int SELECT_ALL = 0;
+        //仅文件夹支持选中
+        public static final int SELECT_FOLDER = 1;
+        //仅文件支持选中
+        public static final int SELECT_FILE = 2;
+    }
+
     //排序模式
     public static final class SortMode {
         //按名称正序
@@ -66,10 +78,11 @@ public class GetFileListTool {
      * @param isShowHideFile 是否显示隐藏文件
      * @param sortMode       排序模式
      * @param showMode       显示模式
+     * @param selectMode     选择模式
      * @return 文件信息对象列表
      * @throws FileLoadException 文件加载异常
      */
-    public ArrayList<FileInfo> getFileInfoList(String path, boolean isShowHideFile, int sortMode, int showMode) throws FileLoadException {
+    public ArrayList<FileInfo> getFileInfoList(String path, boolean isShowHideFile, int sortMode, int showMode, int selectMode) throws FileLoadException {
         ArrayList<FileInfo> list = new ArrayList<>();
         if (path.equals(this.nowPath) && !this.fileInfoList.isEmpty()) {
             list.addAll(this.fileInfoList);
@@ -98,10 +111,11 @@ public class GetFileListTool {
     /**
      * 文件2数组转文件信息对象列表
      *
-     * @param file2List 文件2对象列表
+     * @param file2List  文件2对象列表
+     * @param selectMode 选择模式
      * @return 文件信息对象列表
      */
-    private ArrayList<FileInfo> file2ListToFileInfoList(File2[] file2List) {
+    private ArrayList<FileInfo> file2ListToFileInfoList(File2[] file2List, int selectMode) {
         ArrayList<FileInfo> fileInfoList = new ArrayList<>();
 
         for (File2 file2 : file2List) {
@@ -111,12 +125,32 @@ public class GetFileListTool {
             fileInfo.setDirectory(file2.isDirectory());
             fileInfo.setLastModified(file2.lastModified());
             fileInfo.setLastModifiedText(new SimpleDateFormat("yyyy/MM/dd HH:mm").format(file2.lastModified()));
-            fileInfo.setSelectType(FileInfo.SelectType.SELECT_TYPE_NONE);
             fileInfo.setFileType(file2.getType());
             fileInfo.setFile2(file2);
+            //设置选择模式
+            this.setSelectMode(fileInfo, selectMode);
         }
 
         return fileInfoList;
+    }
+
+    /**
+     * 设置选择模式
+     *
+     * @param fileInfo   文件信息对象
+     * @param selectMode 选择模式
+     */
+    private void setSelectMode(FileInfo fileInfo, int selectMode) {
+        switch (selectMode) {
+            case SelectMode.SELECT_CLOSE ->
+                    fileInfo.setSelectType(FileInfo.SelectType.SELECT_TYPE_NONE);
+            case SelectMode.SELECT_ALL ->
+                    fileInfo.setSelectType(FileInfo.SelectType.SELECT_TYPE_UNSELECT);
+            case SelectMode.SELECT_FOLDER ->
+                    fileInfo.setSelectType(fileInfo.isDirectory() ? FileInfo.SelectType.SELECT_TYPE_UNSELECT : FileInfo.SelectType.SELECT_TYPE_NONE);
+            case SelectMode.SELECT_FILE ->
+                    fileInfo.setSelectType(fileInfo.isDirectory() ? FileInfo.SelectType.SELECT_TYPE_NONE : FileInfo.SelectType.SELECT_TYPE_UNSELECT);
+        }
     }
 
     /**
@@ -150,5 +184,13 @@ public class GetFileListTool {
         this.fileInfoList.clear();
         this.parentFile = null;
         this.nowPath = null;
+    }
+
+    public File2 getParentFile() {
+        return parentFile;
+    }
+
+    public String getNowPath() {
+        return nowPath;
     }
 }
