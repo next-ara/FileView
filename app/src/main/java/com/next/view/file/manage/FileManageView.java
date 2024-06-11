@@ -92,6 +92,9 @@ public class FileManageView extends LinearLayout {
     //是否显示隐藏文件
     private boolean isShowHideFile = false;
 
+    //是否正在加载
+    private boolean isLoading = false;
+
     public FileManageView(@NonNull Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
         this.init();
@@ -111,6 +114,10 @@ public class FileManageView extends LinearLayout {
      * 加载路径
      */
     public void loadPath(String path) {
+        if (this.isLoading) {
+            return;
+        }
+
         //显示加载
         this.showLoading();
 
@@ -138,6 +145,10 @@ public class FileManageView extends LinearLayout {
      * 刷新列表
      */
     public void refreshPath() {
+        if (this.isLoading) {
+            return;
+        }
+
         //显示加载
         this.showLoading();
 
@@ -196,14 +207,45 @@ public class FileManageView extends LinearLayout {
             return;
         }
 
-        if (this.selectMode == GetFileListTool.SelectMode.SELECT_FOLDER && !fileInfo.isDirectory()) {
-            return;
-        }
-
         //设置选择类型
         fileInfo.setSelectType(isSelect ? FileInfo.SelectType.SELECT_TYPE_SELECT : FileInfo.SelectType.SELECT_TYPE_UNSELECT);
         //通知数据更新
         this.adapterObj.notifyItemChanged(fileInfo);
+    }
+
+    /**
+     * 关闭选择模式
+     */
+    public void closeSelect() {
+        if (this.selectMode == GetFileListTool.SelectMode.SELECT_CLOSE) {
+            return;
+        }
+
+        //设置选择模式
+        this.selectMode = GetFileListTool.SelectMode.SELECT_CLOSE;
+        ArrayList<FileInfo> fileInfoList = this.adapterObj.getFileInfoList();
+        this.getFileListTool.setItemSelectMode(fileInfoList, this.selectMode);
+        for (int i = 0; i < fileInfoList.size(); i++) {
+            this.adapterObj.notifyItemChanged(i);
+        }
+    }
+
+    /**
+     * 获取文件信息对象列表
+     *
+     * @return 文件信息对象列表
+     */
+    public ArrayList<FileInfo> getFileInfoList() {
+        return this.adapterObj.getFileInfoList();
+    }
+
+    /**
+     * 获取选中的文件信息对象列表
+     *
+     * @return 文件信息对象列表
+     */
+    public ArrayList<FileInfo> getSelectFileInfoList() {
+        return this.adapterObj.getSelectFileInfoList();
     }
 
     /**
@@ -249,6 +291,7 @@ public class FileManageView extends LinearLayout {
         this.loadingView.setVisibility(VISIBLE);
         this.noFileTipsView.setVisibility(GONE);
         this.adapterObj.clear();
+        this.isLoading = true;
     }
 
     /**
@@ -257,6 +300,7 @@ public class FileManageView extends LinearLayout {
     private void closeLoading() {
         this.loadingView.setVisibility(GONE);
         this.noFileTipsView.setVisibility(GONE);
+        this.isLoading = false;
 
         if (this.adapterObj.getFileInfoList().isEmpty()) {
             this.showNoTips(this.getString(R.string.file_manage_no_file_tips));
@@ -271,6 +315,7 @@ public class FileManageView extends LinearLayout {
     private void closeLoading(FileLoadException e) {
         this.loadingView.setVisibility(GONE);
         this.noFileTipsView.setVisibility(GONE);
+        this.isLoading = false;
 
         if (this.adapterObj.getFileInfoList().isEmpty()) {
             String tips;

@@ -24,10 +24,6 @@ public class GetFileListTool {
     public final class SelectMode {
         //关闭选中模式
         public static final int SELECT_CLOSE = -1;
-        //支持所有文件选中
-        public static final int SELECT_ALL = 0;
-        //仅文件夹支持选中
-        public static final int SELECT_FOLDER = 1;
         //仅文件支持选中
         public static final int SELECT_FILE = 2;
     }
@@ -158,10 +154,6 @@ public class GetFileListTool {
         switch (selectMode) {
             case SelectMode.SELECT_CLOSE ->
                     fileInfo.setSelectType(FileInfo.SelectType.SELECT_TYPE_NONE);
-            case SelectMode.SELECT_ALL ->
-                    fileInfo.setSelectType(FileInfo.SelectType.SELECT_TYPE_UNSELECT);
-            case SelectMode.SELECT_FOLDER ->
-                    fileInfo.setSelectType(fileInfo.isDirectory() ? FileInfo.SelectType.SELECT_TYPE_UNSELECT : FileInfo.SelectType.SELECT_TYPE_NONE);
             case SelectMode.SELECT_FILE ->
                     fileInfo.setSelectType(fileInfo.isDirectory() ? FileInfo.SelectType.SELECT_TYPE_NONE : FileInfo.SelectType.SELECT_TYPE_UNSELECT);
         }

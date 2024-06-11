@@ -205,6 +205,23 @@ public class FileManageAdapter extends RecyclerView.Adapter<FileManageAdapter.Vi
     }
 
     /**
+     * 获取选中的文件信息对象列表
+     *
+     * @return 选中的文件信息对象列表
+     */
+    public ArrayList<FileInfo> getSelectFileInfoList() {
+        ArrayList<FileInfo> selectFileInfoList = new ArrayList<>();
+
+        for (FileInfo fileInfo : this.filterFileInfoList) {
+            if (fileInfo.getSelectType() == FileInfo.SelectType.SELECT_TYPE_SELECT) {
+                selectFileInfoList.add(fileInfo);
+            }
+        }
+
+        return selectFileInfoList;
+    }
+
+    /**
      * 设置文件基础信息
      *
      * @param holder
