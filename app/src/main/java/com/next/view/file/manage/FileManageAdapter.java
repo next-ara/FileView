@@ -172,7 +172,7 @@ public class FileManageAdapter extends RecyclerView.Adapter<FileManageAdapter.Vi
      */
     private void setFileBaseInfo(ViewHolder holder, FileInfo fileInfo) {
         //设置文件最后修改时间
-        holder.fileTimeView.setText(fileInfo.getLastModified());
+        holder.fileTimeView.setText(fileInfo.getLastModifiedText());
         //设置文件名称
         holder.fileNameView.setText(fileInfo.getFileName());
         //获取文件类型

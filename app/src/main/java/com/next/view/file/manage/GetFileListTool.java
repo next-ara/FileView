@@ -94,7 +94,7 @@ public class GetFileListTool {
             FileListFactory.FileListInfo fileListInfo = this.factory.getFileList(path);
             this.parentFile = fileListInfo.getParentFile();
             File2[] file2s = fileListInfo.getChildFileList();
-            this.fileInfoList = this.file2ListToFileInfoList(file2s);
+            this.fileInfoList = this.file2ListToFileInfoList(file2s, selectMode);
             list.addAll(this.fileInfoList);
         }
 

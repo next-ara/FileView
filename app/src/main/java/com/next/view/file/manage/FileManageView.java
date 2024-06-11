@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.SimpleItemAnimator;
 
+import com.next.module.file2.File2;
 import com.next.module.file2.tool.FileLoadException;
 import com.next.view.file.R;
 import com.next.view.file.info.FileInfo;
@@ -152,6 +153,15 @@ public class FileManageView extends LinearLayout {
      */
     public String getNowPath() {
         return this.getFileListTool.getNowPath();
+    }
+
+    /**
+     * 获取父文件对象
+     *
+     * @return 父文件对象
+     */
+    public File2 getParentFile() {
+        return this.getFileListTool.getParentFile();
     }
 
     /**
