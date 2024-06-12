@@ -3,6 +3,7 @@ package com.next.view.file.path;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.View;
+import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.ScaleAnimation;
 import android.widget.LinearLayout;
@@ -177,7 +178,11 @@ public class FilePathListView extends LinearLayout {
         ScaleAnimation scaleAnimation = new ScaleAnimation(0.8f, 1f, 0.8f, 1f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
         scaleAnimation.setDuration(500);
         scaleAnimation.setInterpolator(PathInterpolatorCompat.create(0f, 0.6f, 0f, 1f));
+        AlphaAnimation alphaAnimation = new AlphaAnimation(0f, 1f);
+        alphaAnimation.setDuration(500);
+        alphaAnimation.setInterpolator(PathInterpolatorCompat.create(0f, 0.6f, 0f, 1f));
         itemView.startAnimation(scaleAnimation);
+        itemView.startAnimation(alphaAnimation);
     }
 
     /**
@@ -230,7 +235,11 @@ public class FilePathListView extends LinearLayout {
 
             }
         });
+        AlphaAnimation alphaAnimation = new AlphaAnimation(1f, 0f);
+        alphaAnimation.setDuration(500);
+        alphaAnimation.setInterpolator(PathInterpolatorCompat.create(0f, 0.6f, 0f, 1f));
         itemView.startAnimation(scaleAnimation);
+        itemView.startAnimation(alphaAnimation);
     }
 
     /**
