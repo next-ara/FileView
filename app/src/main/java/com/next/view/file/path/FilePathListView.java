@@ -128,7 +128,7 @@ public class FilePathListView extends LinearLayout {
      */
     private void setParentPath(String targetPath) {
         int waitRemovePathCount = 0;
-        for (String nowPath = this.nowPath; !nowPath.equals(targetPath); nowPath = FilePathTool.getParentPath(targetPath)) {
+        for (String nowPath = this.nowPath; !nowPath.equals(targetPath); nowPath = FilePathTool.getParentPath(nowPath)) {
             waitRemovePathCount++;
         }
 
@@ -197,7 +197,7 @@ public class FilePathListView extends LinearLayout {
      * @param index 路径索引
      */
     private void removePathItem(int index) {
-        if (index >= this.pathList.size() - 1) {
+        if (index >= this.pathList.size()) {
             return;
         }
 
