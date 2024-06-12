@@ -5,7 +5,9 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
+import android.view.animation.AnimationSet;
 import android.view.animation.ScaleAnimation;
+import android.widget.HorizontalScrollView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -175,14 +177,15 @@ public class FilePathListView extends LinearLayout {
         this.pathList.add(folderName);
         this.pathViewList.add(itemView);
         this.pathLayout.addView(itemView, index, this.getItemLayoutParams());
-        ScaleAnimation scaleAnimation = new ScaleAnimation(0.8f, 1f, 0.8f, 1f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
-        scaleAnimation.setDuration(500);
-        scaleAnimation.setInterpolator(PathInterpolatorCompat.create(0f, 0.6f, 0f, 1f));
-        AlphaAnimation alphaAnimation = new AlphaAnimation(0f, 1f);
-        alphaAnimation.setDuration(500);
-        alphaAnimation.setInterpolator(PathInterpolatorCompat.create(0f, 0.6f, 0f, 1f));
-        itemView.startAnimation(scaleAnimation);
-        itemView.startAnimation(alphaAnimation);
+        //滚动到最右侧
+        ((HorizontalScrollView) this.pathLayout.getParent()).fullScroll(HorizontalScrollView.FOCUS_RIGHT);
+
+        AnimationSet animationSet = new AnimationSet(true);
+        animationSet.setDuration(500);
+        animationSet.setInterpolator(PathInterpolatorCompat.create(0f, 0.6f, 0f, 1f));
+        animationSet.addAnimation(new AlphaAnimation(0f, 1f));
+        animationSet.addAnimation(new ScaleAnimation(0.8f, 1f, 0.8f, 1f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f));
+        itemView.startAnimation(animationSet);
     }
 
     /**
@@ -216,10 +219,10 @@ public class FilePathListView extends LinearLayout {
         FilePathListView.this.pathList.remove(index);
         FilePathListView.this.pathViewList.remove(index);
 
-        ScaleAnimation scaleAnimation = new ScaleAnimation(1f, 0.8f, 1f, 0.8f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
-        scaleAnimation.setDuration(500);
-        scaleAnimation.setInterpolator(PathInterpolatorCompat.create(0f, 0.6f, 0f, 1f));
-        scaleAnimation.setAnimationListener(new Animation.AnimationListener() {
+        AnimationSet animationSet = new AnimationSet(true);
+        animationSet.setDuration(500);
+        animationSet.setInterpolator(PathInterpolatorCompat.create(0f, 0.6f, 0f, 1f));
+        animationSet.setAnimationListener(new Animation.AnimationListener() {
             @Override
             public void onAnimationStart(Animation animation) {
 
@@ -235,11 +238,9 @@ public class FilePathListView extends LinearLayout {
 
             }
         });
-        AlphaAnimation alphaAnimation = new AlphaAnimation(1f, 0f);
-        alphaAnimation.setDuration(500);
-        alphaAnimation.setInterpolator(PathInterpolatorCompat.create(0f, 0.6f, 0f, 1f));
-        itemView.startAnimation(scaleAnimation);
-        itemView.startAnimation(alphaAnimation);
+        animationSet.addAnimation(new AlphaAnimation(1f, 0f));
+        animationSet.addAnimation(new ScaleAnimation(1f, 0.8f, 1f, 0.8f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f));
+        itemView.startAnimation(animationSet);
     }
 
     /**
