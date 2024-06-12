@@ -1,6 +1,7 @@
 package com.next.view.file.path;
 
 import android.content.Context;
+import android.os.Handler;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.animation.AlphaAnimation;
@@ -230,7 +231,9 @@ public class FilePathListView extends LinearLayout {
 
             @Override
             public void onAnimationEnd(Animation animation) {
-                FilePathListView.this.pathLayout.removeView(itemView);
+                new Handler().post(() -> {
+                    FilePathListView.this.pathLayout.removeView(itemView);
+                });
             }
 
             @Override
