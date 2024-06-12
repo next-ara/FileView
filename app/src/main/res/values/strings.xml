@@ -3,4 +3,7 @@
     <!-- 文件管理控件 -->
     <string name="file_manage_no_file_tips">没有文件</string>
     <string name="file_manage_limit_tips">访问限制</string>
+
+    <!-- 文件路径列表控件 -->
+    <string name="file_path_list_root_path">根目录</string>
 </resources>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.next.view.round.RoundSpringBackLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="wrap_content"
+    android:layout_height="@dimen/dp_34"
+    app:radius="@dimen/dp_11"
+    app:scrollableView="@id/scrollView">
+
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/scrollView"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:overScrollMode="never"
+        android:scrollbars="none">
+
+        <LinearLayout
+            android:id="@+id/layout_path"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:orientation="horizontal" />
+
+    </androidx.core.widget.NestedScrollView>
+
+</com.next.view.round.RoundSpringBackLayout>
