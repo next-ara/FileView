@@ -182,7 +182,7 @@ public class FilePathListView extends LinearLayout {
         ((HorizontalScrollView) this.pathLayout.getParent()).fullScroll(HorizontalScrollView.FOCUS_RIGHT);
 
         AnimationSet animationSet = new AnimationSet(true);
-        animationSet.setDuration(500);
+        animationSet.setDuration(200);
         animationSet.setInterpolator(PathInterpolatorCompat.create(0f, 0.6f, 0f, 1f));
         animationSet.addAnimation(new AlphaAnimation(0f, 1f));
         animationSet.addAnimation(new ScaleAnimation(0.8f, 1f, 0.8f, 1f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f));
@@ -221,7 +221,7 @@ public class FilePathListView extends LinearLayout {
         FilePathListView.this.pathViewList.remove(index);
 
         AnimationSet animationSet = new AnimationSet(true);
-        animationSet.setDuration(500);
+        animationSet.setDuration(200);
         animationSet.setInterpolator(PathInterpolatorCompat.create(0f, 0.6f, 0f, 1f));
         animationSet.setAnimationListener(new Animation.AnimationListener() {
             @Override
