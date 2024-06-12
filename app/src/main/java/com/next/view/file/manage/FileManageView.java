@@ -14,6 +14,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
+import androidx.core.view.animation.PathInterpolatorCompat;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -21,7 +22,6 @@ import androidx.recyclerview.widget.SimpleItemAnimator;
 
 import com.next.module.file2.File2;
 import com.next.module.file2.tool.FilePathTool;
-import com.next.view.file.EaseCubicInterpolator;
 import com.next.view.file.R;
 import com.next.view.file.info.FileInfo;
 import com.next.view.file.tool.DeviceTool;
@@ -293,7 +293,7 @@ public class FileManageView extends LinearLayout {
     private void showListAnim() {
         TranslateAnimation translateAnimation = new TranslateAnimation(0, 0, this.fileManageView.getHeight(), 0);
         translateAnimation.setDuration(500);
-        translateAnimation.setInterpolator(new EaseCubicInterpolator(0f, 1f, 0f, 1f));
+        translateAnimation.setInterpolator(PathInterpolatorCompat.create(0f, 1f, 0f, 1f));
         this.fileManageView.startAnimation(translateAnimation);
     }
 
