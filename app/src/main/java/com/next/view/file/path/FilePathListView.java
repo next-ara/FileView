@@ -1,5 +1,8 @@
 package com.next.view.file.path;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.animation.ValueAnimator;
 import android.content.Context;
 import android.os.Handler;
 import android.util.AttributeSet;
@@ -10,12 +13,12 @@ import android.view.animation.AnimationSet;
 import android.view.animation.ScaleAnimation;
 import android.widget.HorizontalScrollView;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 import androidx.core.view.animation.PathInterpolatorCompat;
 
 import com.next.module.file2.tool.FilePathTool;
+import com.next.view.anim.AnimButton;
 import com.next.view.file.R;
 
 import java.io.File;
@@ -160,15 +163,15 @@ public class FilePathListView extends LinearLayout {
     private void addPathItem(String folderName) {
         int index = this.pathLayout.getChildCount();
         View itemView = View.inflate(this.getContext(), R.layout.next_item_path, null);
-        TextView textView = itemView.findViewById(R.id.item_path);
-        textView.setText(folderName);
-        itemView.setOnClickListener(view -> {
+        AnimButton animButton = itemView.findViewById(R.id.item_path);
+        animButton.setText(folderName);
+        animButton.setOnClickListener(view -> {
             if (this.onPathClickListener != null) {
                 this.onPathClickListener.onClick(this.getPath(index));
             }
         });
 
-        itemView.setOnLongClickListener(view -> {
+        animButton.setOnLongClickListener(view -> {
             if (this.onPathClickListener != null) {
                 this.onPathClickListener.onLongClick(this.getPath(index));
             }
@@ -178,8 +181,9 @@ public class FilePathListView extends LinearLayout {
         this.pathList.add(folderName);
         this.pathViewList.add(itemView);
         this.pathLayout.addView(itemView, index, this.getItemLayoutParams());
+
         //滚动到最右侧
-        ((HorizontalScrollView) this.pathLayout.getParent()).fullScroll(HorizontalScrollView.FOCUS_RIGHT);
+        this.scrollToRight();
 
         AnimationSet animationSet = new AnimationSet(true);
         animationSet.setDuration(200);
@@ -196,8 +200,17 @@ public class FilePathListView extends LinearLayout {
      */
     private LinearLayout.LayoutParams getItemLayoutParams() {
         LayoutParams layoutParams = new LayoutParams(LayoutParams.WRAP_CONTENT, (int) this.getContext().getResources().getDimension(R.dimen.dp_34));
-        layoutParams.rightMargin = (int) this.getContext().getResources().getDimension(R.dimen.dp_5);
         return layoutParams;
+    }
+
+    /**
+     * 滚动到最右侧
+     */
+    private void scrollToRight() {
+        new Handler().post(() -> {
+            //滚动到最右侧
+            ((HorizontalScrollView) this.pathLayout.getParent()).fullScroll(HorizontalScrollView.FOCUS_RIGHT);
+        });
     }
 
     /**
@@ -222,6 +235,7 @@ public class FilePathListView extends LinearLayout {
 
         AnimationSet animationSet = new AnimationSet(true);
         animationSet.setDuration(200);
+        animationSet.setFillAfter(true);
         animationSet.setInterpolator(PathInterpolatorCompat.create(0f, 0.6f, 0f, 1f));
         animationSet.setAnimationListener(new Animation.AnimationListener() {
             @Override
@@ -232,7 +246,8 @@ public class FilePathListView extends LinearLayout {
             @Override
             public void onAnimationEnd(Animation animation) {
                 new Handler().post(() -> {
-                    FilePathListView.this.pathLayout.removeView(itemView);
+                    //显示隐藏动画
+                    FilePathListView.this.showHideViewAnim(itemView);
                 });
             }
 
@@ -244,6 +259,28 @@ public class FilePathListView extends LinearLayout {
         animationSet.addAnimation(new AlphaAnimation(1f, 0f));
         animationSet.addAnimation(new ScaleAnimation(1f, 0.8f, 1f, 0.8f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f));
         itemView.startAnimation(animationSet);
+    }
+
+    /**
+     * 显示隐藏动画
+     *
+     * @param view 视图对象
+     */
+    private void showHideViewAnim(View view) {
+        ValueAnimator valueAnimator = ValueAnimator.ofInt(view.getWidth(), 0);
+        valueAnimator.setDuration(300);
+        valueAnimator.setInterpolator(PathInterpolatorCompat.create(0f, 0.6f, 0f, 1f));
+        valueAnimator.addUpdateListener(valueAnimator1 -> {
+            view.getLayoutParams().width = (int) valueAnimator1.getAnimatedValue();
+            view.requestLayout();
+        });
+        valueAnimator.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                FilePathListView.this.pathLayout.removeView(view);
+            }
+        });
+        valueAnimator.start();
     }
 
     /**

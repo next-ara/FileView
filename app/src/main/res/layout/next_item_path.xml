@@ -1,19 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.next.view.anim.AnimRelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="wrap_content"
-    android:layout_height="@dimen/dp_34"
-    android:background="?colorSecondaryContainer"
-    app:radius="@dimen/dp_11">
+    android:layout_height="wrap_content">
 
-    <TextView
+    <com.next.view.anim.AnimButton
         android:id="@+id/item_path"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
+        android:layout_height="@dimen/dp_34"
+        android:layout_marginRight="@dimen/dp_5"
+        android:background="?colorSecondaryContainer"
         android:fontFamily="sans-serif-medium"
+        android:gravity="center"
         android:paddingHorizontal="@dimen/dp_12"
         android:textColor="?colorOnPrimaryContainer"
-        android:textSize="@dimen/dp_12" />
+        android:textSize="@dimen/dp_12"
+        app:radius="@dimen/dp_11" />
 
-</com.next.view.anim.AnimRelativeLayout>
+</LinearLayout>
