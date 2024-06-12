@@ -7,6 +7,7 @@ import android.os.Looper;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.animation.TranslateAnimation;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -20,6 +21,7 @@ import androidx.recyclerview.widget.SimpleItemAnimator;
 
 import com.next.module.file2.File2;
 import com.next.module.file2.tool.FilePathTool;
+import com.next.view.file.EaseCubicInterpolator;
 import com.next.view.file.R;
 import com.next.view.file.info.FileInfo;
 import com.next.view.file.tool.DeviceTool;
@@ -286,6 +288,16 @@ public class FileManageView extends LinearLayout {
     }
 
     /**
+     * 显示列表动画
+     */
+    private void showListAnim() {
+        TranslateAnimation translateAnimation = new TranslateAnimation(0, 0, this.fileManageView.getHeight(), 0);
+        translateAnimation.setDuration(500);
+        translateAnimation.setInterpolator(new EaseCubicInterpolator(0f, 1f, 0f, 1f));
+        this.fileManageView.startAnimation(translateAnimation);
+    }
+
+    /**
      * 显示加载中视图
      */
     private void showLoading() {
@@ -305,6 +317,9 @@ public class FileManageView extends LinearLayout {
 
         if (this.adapterObj.getFileInfoList().isEmpty()) {
             this.showNoTips(this.getString(R.string.file_manage_no_file_tips));
+        } else {
+            //显示列表动画
+            this.showListAnim();
         }
     }
 
@@ -318,16 +333,14 @@ public class FileManageView extends LinearLayout {
         this.noFileTipsView.setVisibility(GONE);
         this.isLoading = false;
 
-        if (this.adapterObj.getFileInfoList().isEmpty()) {
-            String tips;
-            switch (e.getErrorCode()) {
-                case FileLoadException.ErrorCode.ERROR_CODE_NO_PERMISSION ->
-                        tips = this.getString(R.string.file_manage_limit_tips);
-                default -> tips = this.getString(R.string.file_manage_no_file_tips);
-            }
-
-            this.showNoTips(tips);
+        String tips;
+        switch (e.getErrorCode()) {
+            case FileLoadException.ErrorCode.ERROR_CODE_NO_PERMISSION ->
+                    tips = this.getString(R.string.file_manage_limit_tips);
+            default -> tips = this.getString(R.string.file_manage_no_file_tips);
         }
+
+        this.showNoTips(tips);
     }
 
     /**

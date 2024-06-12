@@ -35,7 +35,7 @@ public class RawFileListLoader extends FileListLoader {
             throw new FileLoadException(FileLoadException.ErrorCode.ERROR_CODE_FILE_NOT_EXIST);
         }
 
-        return new FileListFactory.FileListInfo(rawFile, this.file2ListToFileInfoList(rawFile.listFiles()));
+        return new FileListFactory.FileListInfo(rawFile, this.getFileInfoList(rawFile));
     }
 
     @Override
@@ -62,15 +62,15 @@ public class RawFileListLoader extends FileListLoader {
     }
 
     /**
-     * 文件2数组转文件信息对象列表
+     * 获取文件信息列表
      *
-     * @param file2List 文件2对象列表
-     * @return 文件信息对象列表
+     * @param rawFile 文件对象
+     * @return 文件信息列表
      */
-    private ArrayList<FileInfo> file2ListToFileInfoList(File2[] file2List) {
+    private ArrayList<FileInfo> getFileInfoList(RawFile rawFile) {
         ArrayList<FileInfo> fileInfoList = new ArrayList<>();
 
-        for (File2 file2 : file2List) {
+        for (File2 file2 : rawFile.listFiles()) {
             FileInfo fileInfo = new FileInfo();
             fileInfo.setFileName(file2.getName());
             fileInfo.setFileSize(FileTool.formetFileSize(file2.length()));
