@@ -90,10 +90,8 @@ public class FilePathListAdapter extends RecyclerView.Adapter<FilePathListAdapte
     private void getPathList(String path) {
         this.filePathList.clear();
 
-        for (File file = new File(path); !file.getPath().equals(FilePathTool.ROOT_PATH); file = file.getParentFile()) {
-            if (file.isDirectory()) {
-                this.filePathList.add(file.getName());
-            }
+        for (String nowPath = path; !nowPath.equals(FilePathTool.ROOT_PATH); nowPath = FilePathTool.getParentPath(nowPath)) {
+            this.filePathList.add(new File(nowPath).getName());
         }
 
         this.filePathList.add("根目录");
