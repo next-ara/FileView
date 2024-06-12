@@ -1,7 +1,7 @@
 package com.next.view.file.tool;
 
 import com.next.view.file.info.FileInfo;
-import com.next.view.file.manage.GetFileListTool;
+import com.next.view.file.tool.list.GetFileListTool;
 
 import java.util.ArrayList;
 

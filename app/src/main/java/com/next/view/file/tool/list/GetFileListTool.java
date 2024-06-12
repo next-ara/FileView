@@ -1,13 +1,9 @@
-package com.next.view.file.manage;
+package com.next.view.file.tool.list;
 
 import com.next.module.file2.File2;
-import com.next.module.file2.tool.FileListFactory;
-import com.next.module.file2.tool.FileLoadException;
 import com.next.view.file.info.FileInfo;
 import com.next.view.file.tool.FileSortTool;
-import com.next.view.file.tool.FileTool;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.stream.Collectors;
 
@@ -89,8 +85,7 @@ public class GetFileListTool {
 
             FileListFactory.FileListInfo fileListInfo = this.factory.getFileList(path);
             this.parentFile = fileListInfo.getParentFile();
-            File2[] file2s = fileListInfo.getChildFileList();
-            this.fileInfoList = this.file2ListToFileInfoList(file2s);
+            this.fileInfoList = fileListInfo.getChildFileList();
             list.addAll(this.fileInfoList);
         }
 
@@ -117,31 +112,6 @@ public class GetFileListTool {
             //设置选择模式
             this.setSelectMode(fileInfo, selectMode);
         }
-    }
-
-    /**
-     * 文件2数组转文件信息对象列表
-     *
-     * @param file2List 文件2对象列表
-     * @return 文件信息对象列表
-     */
-    private ArrayList<FileInfo> file2ListToFileInfoList(File2[] file2List) {
-        ArrayList<FileInfo> fileInfoList = new ArrayList<>();
-
-        for (File2 file2 : file2List) {
-            FileInfo fileInfo = new FileInfo();
-            fileInfo.setFileName(file2.getName());
-            fileInfo.setFileSize(FileTool.formetFileSize(file2.length()));
-            fileInfo.setDirectory(file2.isDirectory());
-            fileInfo.setLastModified(file2.lastModified());
-            fileInfo.setLastModifiedText(new SimpleDateFormat("yyyy/MM/dd HH:mm").format(file2.lastModified()));
-            fileInfo.setFileType(file2.getType());
-            fileInfo.setSelectType(FileInfo.SelectType.SELECT_TYPE_NONE);
-            fileInfo.setFile2(file2);
-            fileInfoList.add(fileInfo);
-        }
-
-        return fileInfoList;
     }
 
     /**
