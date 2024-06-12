@@ -83,6 +83,8 @@ public class FilePathListView extends LinearLayout {
         } else {
             this.setParentPath(targetPath);
         }
+
+        this.nowPath = targetPath;
     }
 
     /**
@@ -126,7 +128,7 @@ public class FilePathListView extends LinearLayout {
      */
     private void setParentPath(String targetPath) {
         int waitRemovePathCount = 0;
-        for (String nowPath = this.nowPath; !this.nowPath.equals(targetPath); nowPath = FilePathTool.getParentPath(targetPath)) {
+        for (String nowPath = this.nowPath; !nowPath.equals(targetPath); nowPath = FilePathTool.getParentPath(targetPath)) {
             waitRemovePathCount++;
         }
 
@@ -171,11 +173,22 @@ public class FilePathListView extends LinearLayout {
 
         this.pathList.add(folderName);
         this.pathViewList.add(itemView);
-        this.pathLayout.addView(itemView, index);
+        this.pathLayout.addView(itemView, index, this.getItemLayoutParams());
         ScaleAnimation scaleAnimation = new ScaleAnimation(0.8f, 1f, 0.8f, 1f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
         scaleAnimation.setDuration(500);
         scaleAnimation.setInterpolator(PathInterpolatorCompat.create(0f, 0.6f, 0f, 1f));
         itemView.startAnimation(scaleAnimation);
+    }
+
+    /**
+     * 获取子布局参数
+     *
+     * @return 布局参数
+     */
+    private LinearLayout.LayoutParams getItemLayoutParams() {
+        LayoutParams layoutParams = new LayoutParams(LayoutParams.WRAP_CONTENT, (int) this.getContext().getResources().getDimension(R.dimen.dp_34));
+        layoutParams.rightMargin = (int) this.getContext().getResources().getDimension(R.dimen.dp_5);
+        return layoutParams;
     }
 
     /**
