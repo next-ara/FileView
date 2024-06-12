@@ -76,18 +76,14 @@ public class GetFileListTool {
      */
     public ArrayList<FileInfo> getFileInfoList(String path, boolean isShowHideFile, int sortMode, int showMode, int selectMode) throws FileLoadException {
         ArrayList<FileInfo> list = new ArrayList<>();
-        if (path.equals(this.nowPath) && !this.fileInfoList.isEmpty()) {
-            list.addAll(this.fileInfoList);
-        } else {
-            //初始化数据
-            this.initData();
-            this.nowPath = path;
+        //初始化数据
+        this.initData();
+        this.nowPath = path;
 
-            FileListFactory.FileListInfo fileListInfo = this.factory.getFileList(path);
-            this.parentFile = fileListInfo.getParentFile();
-            this.fileInfoList = fileListInfo.getChildFileList();
-            list.addAll(this.fileInfoList);
-        }
+        FileListFactory.FileListInfo fileListInfo = this.factory.getFileList(path);
+        this.parentFile = fileListInfo.getParentFile();
+        this.fileInfoList = fileListInfo.getChildFileList();
+        list.addAll(this.fileInfoList);
 
         if (!list.isEmpty()) {
             //筛选隐藏文件和显示模式

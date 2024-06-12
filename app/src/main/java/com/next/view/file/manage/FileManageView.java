@@ -7,6 +7,8 @@ import android.os.Looper;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -121,59 +123,55 @@ public class FileManageView extends LinearLayout {
             return;
         }
 
-        //显示加载
-        this.showLoading();
+        AlphaAnimation alphaAnimation = new AlphaAnimation(1f, 0f);
+        alphaAnimation.setDuration(150);
+        alphaAnimation.setInterpolator(PathInterpolatorCompat.create(0f, 1f, 1f, 1f));
+        alphaAnimation.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
 
-        new Thread(() -> {
-            try {
-                ArrayList<FileInfo> fileInfoObjList = this.getFileListTool.getFileInfoList(path, this.isShowHideFile, this.sortMode, this.showMode, this.selectMode);
-                this.adapterObj.setFileInfoList(fileInfoObjList);
-                this.mainHandler.post(() -> {
-                    //关闭加载
-                    this.closeLoading();
-                    this.adapterObj.notifyDataSetChanged();
-                    this.sendLoadComplete();
-                });
-            } catch (FileLoadException e) {
-                this.mainHandler.post(() -> {
-                    //关闭加载
-                    this.closeLoading(e);
-                    this.sendLoadError(e);
-                });
             }
-        }).start();
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                //显示加载
+                FileManageView.this.showLoading();
+
+                new Thread(() -> {
+                    try {
+                        ArrayList<FileInfo> fileInfoObjList = FileManageView.this.getFileListTool.getFileInfoList(path, FileManageView.this.isShowHideFile, FileManageView.this.sortMode, FileManageView.this.showMode, FileManageView.this.selectMode);
+                        FileManageView.this.adapterObj.setFileInfoList(fileInfoObjList);
+                        FileManageView.this.mainHandler.post(() -> {
+                            //关闭加载
+                            FileManageView.this.closeLoading();
+                            FileManageView.this.adapterObj.notifyDataSetChanged();
+                            FileManageView.this.sendLoadComplete();
+                        });
+                    } catch (FileLoadException e) {
+                        FileManageView.this.mainHandler.post(() -> {
+                            //关闭加载
+                            FileManageView.this.closeLoading(e);
+                            FileManageView.this.sendLoadError(e);
+                        });
+                    }
+                }).start();
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        });
+
+        this.fileManageView.startAnimation(alphaAnimation);
     }
 
     /**
      * 刷新列表
      */
     public void refreshPath() {
-        if (this.isLoading) {
-            return;
-        }
-
-        //显示加载
-        this.showLoading();
-
-        new Thread(() -> {
-            try {
-                String path = this.getFileListTool.getNowPath();
-                ArrayList<FileInfo> fileInfoObjList = this.getFileListTool.getFileInfoList(path, this.isShowHideFile, this.sortMode, this.showMode, this.selectMode);
-                this.adapterObj.setFileInfoList(fileInfoObjList);
-                this.mainHandler.post(() -> {
-                    //关闭加载
-                    this.closeLoading();
-                    this.adapterObj.notifyDataSetChanged();
-                    this.sendLoadComplete();
-                });
-            } catch (FileLoadException e) {
-                this.mainHandler.post(() -> {
-                    //关闭加载
-                    this.closeLoading(e);
-                    this.sendLoadError(e);
-                });
-            }
-        }).start();
+        String path = this.getFileListTool.getNowPath();
+        this.loadPath(path);
     }
 
     /**
