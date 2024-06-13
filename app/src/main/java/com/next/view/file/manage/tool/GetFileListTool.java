@@ -93,6 +93,17 @@ public class GetFileListTool {
     }
 
     /**
+     * 获取文件对象
+     *
+     * @param path 路径
+     * @return 文件对象
+     * @throws FileLoadException 文件加载异常
+     */
+    public File2 getFile2(String path) throws FileLoadException {
+        return this.factory.getFile2(path);
+    }
+
+    /**
      * 设置选择模式
      *
      * @param list       文件信息对象列表

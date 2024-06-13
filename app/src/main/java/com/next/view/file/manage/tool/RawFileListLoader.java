@@ -39,6 +39,16 @@ public class RawFileListLoader extends FileListLoader {
     }
 
     @Override
+    public File2 getFile2(String path) throws FileLoadException {
+        //检查访问权限
+        if (!this.checkAccessPermission(path)) {
+            throw new FileLoadException(FileLoadException.ErrorCode.ERROR_CODE_NO_PERMISSION);
+        }
+
+        return File2Creator.fromFile(new File(path));
+    }
+
+    @Override
     public boolean isExecute(String path) {
         return true;
     }

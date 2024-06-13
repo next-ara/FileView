@@ -7,7 +7,7 @@ package com.next.view.file.manage.tool;
  * @time 2024/6/7
  * @auditor
  */
-public class FileLoadException extends RuntimeException {
+public class FileLoadException extends Exception {
 
     //错误码
     public static class ErrorCode {

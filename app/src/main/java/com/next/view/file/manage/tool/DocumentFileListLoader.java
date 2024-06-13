@@ -7,6 +7,7 @@ import android.net.Uri;
 import android.provider.DocumentsContract;
 
 import com.next.module.file2.Contracts;
+import com.next.module.file2.File2;
 import com.next.module.file2.File2Creator;
 import com.next.module.file2.FileConfig;
 import com.next.module.file2.TreeDocumentFile;
@@ -41,6 +42,16 @@ public class DocumentFileListLoader extends FileListLoader {
         }
 
         return new FileListFactory.FileListInfo(treeDocumentFile, this.getFileInfoList(treeDocumentFile));
+    }
+
+    @Override
+    public File2 getFile2(String path) throws FileLoadException {
+        //检查访问权限
+        if (!this.checkAccessPermission(path)) {
+            throw new FileLoadException(FileLoadException.ErrorCode.ERROR_CODE_NO_PERMISSION);
+        }
+
+        return File2Creator.fromUri(FilePathTool.dataPathToUri(path));
     }
 
     @Override

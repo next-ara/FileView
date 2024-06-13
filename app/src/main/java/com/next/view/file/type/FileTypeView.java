@@ -256,6 +256,15 @@ public class FileTypeView extends LinearLayout {
     }
 
     /**
+     * 搜索
+     *
+     * @param constraint 搜索内容
+     */
+    public void search(CharSequence constraint) {
+        this.adapterObj.getFilter().filter(constraint);
+    }
+
+    /**
      * 显示列表动画
      */
     private void showListAnim() {

@@ -63,6 +63,23 @@ public class FileListFactory {
     }
 
     /**
+     * 获取文件对象
+     *
+     * @param path 路径
+     * @return 文件对象
+     * @throws FileLoadException 文件加载异常
+     */
+    public File2 getFile2(String path) throws FileLoadException {
+        for (FileListLoader fileListLoader : this.fileListLoaders) {
+            if (fileListLoader.isExecute(path)) {
+                return fileListLoader.getFile2(path);
+            }
+        }
+
+        return null;
+    }
+
+    /**
      * 初始化文件列表加载器列表
      */
     private void initFileListLoaders() {

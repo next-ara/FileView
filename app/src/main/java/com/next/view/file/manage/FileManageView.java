@@ -26,9 +26,9 @@ import com.next.module.file2.File2;
 import com.next.module.file2.tool.FilePathTool;
 import com.next.view.file.R;
 import com.next.view.file.info.FileInfo;
-import com.next.view.file.tool.DeviceTool;
 import com.next.view.file.manage.tool.FileLoadException;
 import com.next.view.file.manage.tool.GetFileListTool;
+import com.next.view.file.tool.DeviceTool;
 import com.next.view.loading.LoadingView;
 
 import java.util.ArrayList;
@@ -334,6 +334,15 @@ public class FileManageView extends LinearLayout {
      */
     public void addFileClickListener(FileManageAdapter.FileClickListener fileClickListenerObj) {
         this.adapterObj.addFileClickListener(fileClickListenerObj);
+    }
+
+    /**
+     * 搜索
+     *
+     * @param constraint 搜索内容
+     */
+    public void search(CharSequence constraint) {
+        this.adapterObj.getFilter().filter(constraint);
     }
 
     /**
