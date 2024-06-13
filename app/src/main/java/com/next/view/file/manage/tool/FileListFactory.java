@@ -1,4 +1,4 @@
-package com.next.view.file.tool.list;
+package com.next.view.file.manage.tool;
 
 import com.next.module.file2.File2;
 import com.next.view.file.info.FileInfo;

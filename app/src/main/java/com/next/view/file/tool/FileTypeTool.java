@@ -2,12 +2,12 @@ package com.next.view.file.tool;
 
 import com.next.view.file.R;
 import com.next.view.file.info.FileInfo;
-import com.next.view.file.tool.type.AudioTypeListLoader;
-import com.next.view.file.tool.type.DocumentTypeListLoader;
-import com.next.view.file.tool.type.ImageTypeListLoader;
-import com.next.view.file.tool.type.InstallTypeListLoader;
-import com.next.view.file.tool.type.VideoTypeListLoader;
-import com.next.view.file.tool.type.ZipTypeListLoader;
+import com.next.view.file.type.tool.AudioTypeListLoader;
+import com.next.view.file.type.tool.DocumentTypeListLoader;
+import com.next.view.file.type.tool.ImageTypeListLoader;
+import com.next.view.file.type.tool.InstallTypeListLoader;
+import com.next.view.file.type.tool.VideoTypeListLoader;
+import com.next.view.file.type.tool.ZipTypeListLoader;
 
 /**
  * ClassName:文件类型工具类

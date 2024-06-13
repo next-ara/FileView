@@ -18,12 +18,11 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.bumptech.glide.request.transition.DrawableCrossFadeFactory;
-import com.next.module.filehelper.info.ApkInfo;
-import com.next.module.filehelper.info.FileInfo;
 import com.next.view.file.R;
+import com.next.view.file.info.AppInfo;
+import com.next.view.file.info.FileInfo;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 /**
  * ClassName:应用适配器类
@@ -34,38 +33,25 @@ import java.util.HashMap;
  */
 public class ApplicationAdapter extends RecyclerView.Adapter<ApplicationAdapter.ViewHolder> implements Filterable {
 
-    public final class SelectMode {
-        //关闭选中模式
-        public static final int SELECT_CLOSE = -1;
-        //支持所有文件选中
-        public static final int SELECT_ALL = 0;
-        //仅文件夹支持选中
-        public static final int SELECT_FOLDER = 1;
-        //仅文件支持选中
-        public static final int SELECT_FILE = 2;
-    }
-
     //文件点击监听接口
     public interface FileClickListener {
 
         /**
          * 文件点击事件
          *
-         * @param view     控件
          * @param fileInfo 文件信息对象
          */
-        void onClick(View view, FileInfo fileInfo);
+        void onClick(FileInfo fileInfo);
 
         /**
          * 文件长按事件
          *
-         * @param view     控件
          * @param fileInfo 文件信息对象
          */
-        void onLongClick(View view, FileInfo fileInfo);
+        void onLongClick(FileInfo fileInfo);
     }
 
-    //搜索完成监听类
+    //搜索完成监听接口
     public interface OnSearchListener {
 
         /**
@@ -80,23 +66,14 @@ public class ApplicationAdapter extends RecyclerView.Adapter<ApplicationAdapter.
     //过滤文件信息对象列表
     private ArrayList<FileInfo> filterFileInfoList = new ArrayList<>();
 
-    //选中的文件对象Map
-    private HashMap<String, FileInfo> selectFileInfoList = new HashMap<>();
-
     //文件点击监听接口
-    private FileClickListener fileClickListener;
+    private ArrayList<FileClickListener> fileClickListener = new ArrayList<>();
 
     //搜索完成监听接口
     private OnSearchListener onSearchListener;
 
     //上下文
     private Context context;
-
-    //默认图标资源Id
-    private int normalDrawableResId;
-
-    //选中模式
-    private int selectMode = SelectMode.SELECT_FILE;
 
     //图片交叉淡入过渡动画工厂对象
     private DrawableCrossFadeFactory factory;
@@ -124,17 +101,11 @@ public class ApplicationAdapter extends RecyclerView.Adapter<ApplicationAdapter.
 
     public ApplicationAdapter(Context context) {
         this.context = context;
-        this.normalDrawableResId = R.drawable.next_ic_file_apk;
         this.factory = new DrawableCrossFadeFactory.Builder().setCrossFadeEnabled(true).build();
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, @SuppressLint("RecyclerView") int position) {
-        //判断当前下标是否超出文件信息对象列表长度
-        if (this.filterFileInfoList.size() <= position) {
-            return;
-        }
-
+    public void onBindViewHolder(ApplicationAdapter.ViewHolder holder, @SuppressLint("RecyclerView") int position) {
         //获取当前下标的文件信息对象
         FileInfo fileInfo = this.filterFileInfoList.get(position);
 
@@ -149,9 +120,9 @@ public class ApplicationAdapter extends RecyclerView.Adapter<ApplicationAdapter.
     }
 
     @Override
-    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public ApplicationAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.next_item_file, parent, false);
-        ViewHolder holder = new ViewHolder(view);
+        ApplicationAdapter.ViewHolder holder = new ApplicationAdapter.ViewHolder(view);
 
         return holder;
     }
@@ -170,9 +141,8 @@ public class ApplicationAdapter extends RecyclerView.Adapter<ApplicationAdapter.
                 } else {
                     ArrayList<FileInfo> filteredList = new ArrayList<>();
                     for (FileInfo fileInfo : ApplicationAdapter.this.fileInfoList) {
-                        ApkInfo apkInfo = (ApkInfo) fileInfo;
                         //这里根据需求，添加匹配规则
-                        if (apkInfo.getAppName().toLowerCase().contains(filter.toLowerCase())) {
+                        if (fileInfo.getFileName().toLowerCase().contains(filter.toLowerCase())) {
                             filteredList.add(fileInfo);
                         }
                     }
@@ -188,7 +158,6 @@ public class ApplicationAdapter extends RecyclerView.Adapter<ApplicationAdapter.
                 ApplicationAdapter.this.notifyDataSetChanged();
 
                 if (ApplicationAdapter.this.onSearchListener != null) {
-                    //搜索完成
                     ApplicationAdapter.this.onSearchListener.onComplete();
                 }
             }
@@ -196,35 +165,60 @@ public class ApplicationAdapter extends RecyclerView.Adapter<ApplicationAdapter.
     }
 
     /**
-     * 新增选中文件
+     * 通知数据更新
      *
      * @param fileInfo 文件信息对象
      */
-    public void addSelectFile(FileInfo fileInfo) {
-        this.selectFileInfoList.put(fileInfo.getFilePath(), fileInfo);
-        this.notifyItemChanged(this.getFileInfoObjIndex(fileInfo));
-    }
-
-    /**
-     * 检测文件是否被选中
-     *
-     * @param fileInfo 文件信息对象
-     * @return true/false
-     */
-    public boolean fileIsSelect(FileInfo fileInfo) {
-        return this.selectFileInfoList.containsKey(fileInfo.getFilePath());
-    }
-
-    /**
-     * 移除选中文件
-     *
-     * @param fileInfo 文件信息对象
-     */
-    public void deleteSelectFile(FileInfo fileInfo) {
-        if (this.fileIsSelect(fileInfo)) {
-            this.selectFileInfoList.remove(fileInfo.getFilePath());
-            this.notifyItemChanged(this.getFileInfoObjIndex(fileInfo));
+    public void notifyItemChanged(FileInfo fileInfo) {
+        int index = this.filterFileInfoList.indexOf(fileInfo);
+        if (index >= 0) {
+            this.notifyItemChanged(index);
         }
+    }
+
+    /**
+     * 清空数据
+     */
+    public void clear() {
+        this.fileInfoList.clear();
+        this.filterFileInfoList.clear();
+        this.notifyDataSetChanged();
+    }
+
+    /**
+     * 设置文件点击监听
+     *
+     * @param fileClickListener 文件点击监听接口
+     */
+    public void setFileClickListener(FileClickListener fileClickListener) {
+        this.fileClickListener.clear();
+        this.fileClickListener.add(fileClickListener);
+    }
+
+    /**
+     * 添加文件点击监听
+     *
+     * @param fileClickListener 文件点击监听接口
+     */
+    public void addFileClickListener(FileClickListener fileClickListener) {
+        this.fileClickListener.add(fileClickListener);
+    }
+
+    /**
+     * 获取选中的文件信息对象列表
+     *
+     * @return 选中的文件信息对象列表
+     */
+    public ArrayList<FileInfo> getSelectFileInfoList() {
+        ArrayList<FileInfo> selectFileInfoList = new ArrayList<>();
+
+        for (FileInfo fileInfo : this.filterFileInfoList) {
+            if (fileInfo.getSelectType() == FileInfo.SelectType.SELECT_TYPE_SELECT) {
+                selectFileInfoList.add(fileInfo);
+            }
+        }
+
+        return selectFileInfoList;
     }
 
     /**
@@ -233,39 +227,20 @@ public class ApplicationAdapter extends RecyclerView.Adapter<ApplicationAdapter.
      * @param holder
      * @param fileInfo 文件信息对象
      */
-    private void setFileBaseInfo(ViewHolder holder, FileInfo fileInfo) {
-        ApkInfo apkInfo = (ApkInfo) fileInfo;
-
-        //设置文件最后修改时间
-        holder.fileTimeView.setText(apkInfo.getPackageName());
-        //设置文件名称
-        holder.fileNameView.setText(apkInfo.getAppName());
-        //设置文件图标
+    private void setFileBaseInfo(ApplicationAdapter.ViewHolder holder, FileInfo fileInfo) {
+        AppInfo appInfo = (AppInfo) fileInfo;
+        //设置应用包名
+        holder.fileTimeView.setText(appInfo.getPackageName());
+        //设置应用名称
+        holder.fileNameView.setText(appInfo.getAppName());
         Glide.with(this.context)
-                .load(apkInfo)
+                .load(appInfo)
                 .transition(DrawableTransitionOptions.withCrossFade(this.factory))
-                .placeholder(this.normalDrawableResId)
-                .error(this.normalDrawableResId)
+                .placeholder(R.drawable.next_ic_file_apk)
+                .error(R.drawable.next_ic_file_apk)
                 .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
                 .override(148, 148)
                 .into(holder.fileIconView);
-    }
-
-    /**
-     * 获取文件对象下标
-     *
-     * @param fileInfo 文件信息对象
-     * @return 下标
-     */
-    private int getFileInfoObjIndex(FileInfo fileInfo) {
-        for (int i = 0; i < this.filterFileInfoList.size(); i++) {
-            FileInfo fileInfo1 = this.filterFileInfoList.get(i);
-            if (fileInfo1.equals(fileInfo)) {
-                return i;
-            }
-        }
-
-        return 0;
     }
 
     /**
@@ -274,33 +249,21 @@ public class ApplicationAdapter extends RecyclerView.Adapter<ApplicationAdapter.
      * @param holder
      * @param fileInfo 文件信息对象
      */
-    private void setFileSelectState(ViewHolder holder, FileInfo fileInfo) {
-        this.initSelectState(holder);
-
-        if (this.selectMode == SelectMode.SELECT_CLOSE) {
-            holder.fileCheckBox.setVisibility(View.GONE);
-        } else {
-            if (this.selectMode == SelectMode.SELECT_FILE && fileInfo.getFileType().equals(FileInfo.FileType.TYPE_FOLDER)) {
-                return;
-            }
-
-            if (this.selectMode == SelectMode.SELECT_FOLDER && !fileInfo.getFileType().equals(FileInfo.FileType.TYPE_FOLDER)) {
-                return;
-            }
-
-            holder.fileCheckBox.setVisibility(View.VISIBLE);
-            holder.fileCheckBox.setChecked(this.isSelect(fileInfo.getFilePath()));
+    private void setFileSelectState(ApplicationAdapter.ViewHolder holder, FileInfo fileInfo) {
+        switch (fileInfo.getSelectType()) {
+            case FileInfo.SelectType.SELECT_TYPE_NONE:
+                holder.fileCheckBox.setVisibility(View.GONE);
+                holder.fileCheckBox.setChecked(false);
+                break;
+            case FileInfo.SelectType.SELECT_TYPE_SELECT:
+                holder.fileCheckBox.setVisibility(View.VISIBLE);
+                holder.fileCheckBox.setChecked(true);
+                break;
+            case FileInfo.SelectType.SELECT_TYPE_UNSELECT:
+                holder.fileCheckBox.setVisibility(View.VISIBLE);
+                holder.fileCheckBox.setChecked(false);
+                break;
         }
-    }
-
-    /**
-     * 初始化选中状态
-     *
-     * @param holder
-     */
-    private void initSelectState(ViewHolder holder) {
-        holder.fileCheckBox.setVisibility(View.GONE);
-        holder.fileCheckBox.setChecked(false);
     }
 
     /**
@@ -309,29 +272,21 @@ public class ApplicationAdapter extends RecyclerView.Adapter<ApplicationAdapter.
      * @param holder
      * @param fileInfo 文件信息对象
      */
-    private void setFileClick(ViewHolder holder, FileInfo fileInfo) {
+    private void setFileClick(ApplicationAdapter.ViewHolder holder, FileInfo fileInfo) {
         if (this.fileClickListener != null) {
-            holder.itemView.setOnClickListener(view -> this.fileClickListener.onClick(view, fileInfo));
+            holder.itemView.setOnClickListener(view -> {
+                for (FileClickListener fileClickListener : this.fileClickListener) {
+                    fileClickListener.onClick(fileInfo);
+                }
+            });
 
             holder.itemView.setOnLongClickListener(view -> {
-                this.fileClickListener.onLongClick(view, fileInfo);
+                for (FileClickListener fileClickListener : this.fileClickListener) {
+                    fileClickListener.onLongClick(fileInfo);
+                }
                 return true;
             });
         }
-    }
-
-    /**
-     * 验证是否被选中
-     *
-     * @param path 文件路径
-     * @return true/false
-     */
-    private boolean isSelect(String path) {
-        return this.selectFileInfoList.containsKey(path);
-    }
-
-    public void setFileClickListener(FileClickListener fileClickListener) {
-        this.fileClickListener = fileClickListener;
     }
 
     public ArrayList<FileInfo> getFileInfoList() {
@@ -342,27 +297,6 @@ public class ApplicationAdapter extends RecyclerView.Adapter<ApplicationAdapter.
         this.fileInfoList = fileInfoList;
         this.filterFileInfoList.clear();
         this.filterFileInfoList.addAll(fileInfoList);
-    }
-
-    public HashMap<String, FileInfo> getSelectFileInfoList() {
-        return selectFileInfoList;
-    }
-
-    public void setSelectFileInfoList(HashMap<String, FileInfo> selectFileInfoList) {
-        this.selectFileInfoList = selectFileInfoList;
-    }
-
-    public int getSelectMode() {
-        return selectMode;
-    }
-
-    public void setSelectMode(int selectMode) {
-        this.selectMode = selectMode;
-        this.selectFileInfoList.clear();
-
-        for (int i = 0; i < this.filterFileInfoList.size(); i++) {
-            this.notifyItemChanged(i);
-        }
     }
 
     public void setOnSearchListener(OnSearchListener onSearchListener) {

@@ -26,8 +26,7 @@ import com.next.view.file.R;
 import com.next.view.file.info.FileInfo;
 import com.next.view.file.manage.FileManageAdapter;
 import com.next.view.file.tool.DeviceTool;
-import com.next.view.file.tool.list.GetFileListTool;
-import com.next.view.file.tool.type.GetTypeListTool;
+import com.next.view.file.type.tool.GetTypeListTool;
 import com.next.view.loading.LoadingView;
 
 import java.util.ArrayList;
@@ -78,7 +77,7 @@ public class FileTypeView extends LinearLayout {
     private GetTypeListTool getTypeListTool;
 
     //选择模式
-    private int selectMode = GetFileListTool.SelectMode.SELECT_CLOSE;
+    private int selectMode = GetTypeListTool.SelectMode.SELECT_CLOSE;
 
     //是否正在加载
     private boolean isLoading = false;
@@ -158,11 +157,11 @@ public class FileTypeView extends LinearLayout {
      * @param fileInfo 文件信息对象
      */
     public void setItemSelectType(boolean isSelect, FileInfo fileInfo) {
-        if (this.selectMode == GetFileListTool.SelectMode.SELECT_CLOSE) {
+        if (this.selectMode == GetTypeListTool.SelectMode.SELECT_CLOSE) {
             return;
         }
 
-        if (this.selectMode == GetFileListTool.SelectMode.SELECT_FILE && fileInfo.isDirectory()) {
+        if (this.selectMode == GetTypeListTool.SelectMode.SELECT_FILE && fileInfo.isDirectory()) {
             return;
         }
 
@@ -198,12 +197,12 @@ public class FileTypeView extends LinearLayout {
      * 关闭选择模式
      */
     public void closeSelect() {
-        if (this.selectMode == GetFileListTool.SelectMode.SELECT_CLOSE) {
+        if (this.selectMode == GetTypeListTool.SelectMode.SELECT_CLOSE) {
             return;
         }
 
         //设置选择模式
-        this.selectMode = GetFileListTool.SelectMode.SELECT_CLOSE;
+        this.selectMode = GetTypeListTool.SelectMode.SELECT_CLOSE;
         ArrayList<FileInfo> fileInfoList = this.adapterObj.getFileInfoList();
         this.getTypeListTool.setItemSelectMode(fileInfoList, this.selectMode);
         for (int i = 0; i < fileInfoList.size(); i++) {
@@ -376,7 +375,7 @@ public class FileTypeView extends LinearLayout {
      * @param fileInfo 文件信息对象
      */
     private void itemClick(FileInfo fileInfo) {
-        if (this.selectMode != GetFileListTool.SelectMode.SELECT_CLOSE) {
+        if (this.selectMode != GetTypeListTool.SelectMode.SELECT_CLOSE) {
             //设置文件选择类型
             this.setItemSelectType(fileInfo.getSelectType() != FileInfo.SelectType.SELECT_TYPE_SELECT, fileInfo);
         }
@@ -388,9 +387,9 @@ public class FileTypeView extends LinearLayout {
      * @param fileInfo 文件信息对象
      */
     private void itemLongClick(FileInfo fileInfo) {
-        if (this.selectMode == GetFileListTool.SelectMode.SELECT_CLOSE && !fileInfo.isDirectory()) {
+        if (this.selectMode == GetTypeListTool.SelectMode.SELECT_CLOSE && !fileInfo.isDirectory()) {
             //设置选择模式
-            this.selectMode = GetFileListTool.SelectMode.SELECT_FILE;
+            this.selectMode = GetTypeListTool.SelectMode.SELECT_FILE;
             ArrayList<FileInfo> fileInfoList = this.adapterObj.getFileInfoList();
             this.getTypeListTool.setItemSelectMode(fileInfoList, this.selectMode);
             fileInfo.setSelectType(FileInfo.SelectType.SELECT_TYPE_SELECT);

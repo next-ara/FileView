@@ -27,8 +27,8 @@ import com.next.module.file2.tool.FilePathTool;
 import com.next.view.file.R;
 import com.next.view.file.info.FileInfo;
 import com.next.view.file.tool.DeviceTool;
-import com.next.view.file.tool.list.FileLoadException;
-import com.next.view.file.tool.list.GetFileListTool;
+import com.next.view.file.manage.tool.FileLoadException;
+import com.next.view.file.manage.tool.GetFileListTool;
 import com.next.view.loading.LoadingView;
 
 import java.util.ArrayList;
@@ -174,6 +174,33 @@ public class FileManageView extends LinearLayout {
     public void refreshList() {
         String path = this.getFileListTool.getNowPath();
         this.loadList(path);
+    }
+
+    /**
+     * 滚动到位置
+     *
+     * @param fileName 文件名称
+     */
+    public void scrollToPosition(String fileName) {
+        ArrayList<FileInfo> fileInfoObjList = this.adapterObj.getFileInfoList();
+        for (int i = 0; i < fileInfoObjList.size(); i++) {
+            FileInfo fileInfo = fileInfoObjList.get(i);
+            if (fileInfo.getFileName().equals(fileName)) {
+                //滚动到文件位置
+                this.scrollToPosition(i);
+                return;
+            }
+        }
+    }
+
+    /**
+     * 滚动到位置
+     *
+     * @param position 位置
+     */
+    public void scrollToPosition(int position) {
+        LinearLayoutManager manager = (LinearLayoutManager) this.fileManageView.getLayoutManager();
+        Objects.requireNonNull(manager).scrollToPositionWithOffset(position, 0);
     }
 
     /**

@@ -8,8 +8,8 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.Registry;
 import com.bumptech.glide.annotation.GlideModule;
 import com.bumptech.glide.module.AppGlideModule;
-import com.next.module.filehelper.info.ApkInfo;
-import com.next.view.file.glide.apk.ApkModelLoaderFactory;
+import com.next.view.file.glide.app.AppModelLoaderFactory;
+import com.next.view.file.info.AppInfo;
 
 import java.io.InputStream;
 
@@ -26,6 +26,6 @@ public class FileGlideModule extends AppGlideModule {
     @Override
     public void registerComponents(@NonNull Context context, @NonNull Glide glide, @NonNull Registry registry) {
         super.registerComponents(context, glide, registry);
-        registry.prepend(ApkInfo.class, InputStream.class, new ApkModelLoaderFactory(context));
+        registry.prepend(AppInfo.class, InputStream.class, new AppModelLoaderFactory(context));
     }
 }

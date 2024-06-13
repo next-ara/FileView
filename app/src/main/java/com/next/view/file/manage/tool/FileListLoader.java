@@ -1,4 +1,4 @@
-package com.next.view.file.tool.list;
+package com.next.view.file.manage.tool;
 
 /**
  * ClassName:文件列表加载器类

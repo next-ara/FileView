@@ -1,4 +1,4 @@
-package com.next.view.file.tool.list;
+package com.next.view.file.manage.tool;
 
 import android.content.ContentResolver;
 import android.content.UriPermission;

@@ -1,4 +1,4 @@
-package com.next.view.file.tool.list;
+package com.next.view.file.manage.tool;
 
 import android.os.Build;
 
@@ -76,7 +76,7 @@ public class RawFileListLoader extends FileListLoader {
             fileInfo.setFileSize(FileTool.formetFileSize(file2.length()));
             fileInfo.setDirectory(file2.isDirectory());
             fileInfo.setLastModified(file2.lastModified());
-            fileInfo.setLastModifiedText(new SimpleDateFormat("yyyy/MM/dd HH:mm").format(file2.lastModified()));
+            fileInfo.setLastModifiedText(new SimpleDateFormat("yyyy/MM/dd HH:mm").format(fileInfo.getLastModified()));
             fileInfo.setFileType(file2.getType());
             fileInfo.setSelectType(FileInfo.SelectType.SELECT_TYPE_NONE);
             fileInfo.setFile2(file2);

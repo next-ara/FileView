@@ -1,4 +1,4 @@
-package com.next.view.file.glide.apk;
+package com.next.view.file.glide.app;
 
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
@@ -14,36 +14,36 @@ import androidx.annotation.NonNull;
 import com.bumptech.glide.Priority;
 import com.bumptech.glide.load.DataSource;
 import com.bumptech.glide.load.data.DataFetcher;
-import com.next.module.filehelper.info.ApkInfo;
+import com.next.view.file.info.AppInfo;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 
 /**
- * ClassName:Apk图标提取器类
+ * ClassName:应用图标提取器类
  *
  * @author Afton
  * @time 2024/6/6
  * @auditor
  */
-public class ApkIconFetcher implements DataFetcher<InputStream> {
+public class AppIconFetcher implements DataFetcher<InputStream> {
 
-    //Apk信息对象
-    private ApkInfo apkInfo;
+    //应用信息对象
+    private AppInfo appInfo;
 
     //包管理器对象
     private final PackageManager packageManager;
 
-    public ApkIconFetcher(ApkInfo apkInfo, Context context) {
-        this.apkInfo = apkInfo;
+    public AppIconFetcher(AppInfo appInfo, Context context) {
+        this.appInfo = appInfo;
         this.packageManager = context.getPackageManager();
     }
 
     @Override
     public void loadData(@NonNull Priority priority, @NonNull DataCallback<? super InputStream> dataCallback) {
         try {
-            ApplicationInfo applicationInfo = this.packageManager.getApplicationInfo(this.apkInfo.getPackageName(), 0);
+            ApplicationInfo applicationInfo = this.packageManager.getApplicationInfo(this.appInfo.getPackageName(), 0);
 
             Drawable iconDrawable = this.packageManager.getApplicationIcon(applicationInfo);
             Bitmap iconBitmap;
