@@ -42,29 +42,43 @@ abstract public class TypeListLoader {
     /**
      * 获取类型列表
      *
-     * @param mimeTypeList MIME类型列表
+     * @param fileExtensionList 文件后缀列表
      * @return 类型列表
      */
-    protected ArrayList<FileInfo> getTypeList(String[] mimeTypeList) {
+    protected ArrayList<FileInfo> getTypeList(String[] fileExtensionList) {
         ArrayList<FileInfo> typeList = new ArrayList<>();
         ContentResolver contentResolver = FileConfig.getApplication().getContentResolver();
         Uri uri = MediaStore.Files.getContentUri("external");
 
         String[] projection = new String[]{
-                MediaStore.MediaColumns._ID,
-                MediaStore.MediaColumns.DISPLAY_NAME,
-                MediaStore.MediaColumns.SIZE,
-                MediaStore.MediaColumns.MIME_TYPE,
-                MediaStore.MediaColumns.DATE_MODIFIED
+                MediaStore.Files.FileColumns._ID,
+                MediaStore.Files.FileColumns.DISPLAY_NAME,
+                MediaStore.Files.FileColumns.SIZE,
+                MediaStore.Files.FileColumns.MIME_TYPE,
+                MediaStore.Files.FileColumns.DATE_MODIFIED
         };
-        String selection = MediaStore.Files.FileColumns.MIME_TYPE + "=?";
 
-        Cursor c = contentResolver.query(uri, projection, selection, mimeTypeList, MediaStore.Files.FileColumns.DATE_TAKEN + " DESC");
+        StringBuilder selection = new StringBuilder(MediaStore.Files.FileColumns.DATA);
+        selection.append(" LIKE '%");
+        selection.append(fileExtensionList[0]);
+        selection.append("'");
+
+        if (fileExtensionList.length > 1) {
+            for (String suffix : fileExtensionList) {
+                selection.append(" or ");
+                selection.append(MediaStore.Files.FileColumns.DATA);
+                selection.append(" LIKE '%");
+                selection.append(suffix);
+                selection.append("'");
+            }
+        }
+
+        Cursor c = contentResolver.query(uri, projection, selection.toString(), null, MediaStore.Files.FileColumns.DATE_TAKEN + " DESC");
         if (c != null) {
             try {
                 while (c.moveToNext()) {
                     long imageId = c.getLong(0);
-                    Uri imageUri = ContentUris.withAppendedId(uri, imageId);
+                    Uri mediaUri = ContentUris.withAppendedId(uri, imageId);
                     final String name = c.getString(1);
                     final long size = c.getLong(2);
                     final String mimeType = c.getString(3);
@@ -78,7 +92,7 @@ abstract public class TypeListLoader {
                     fileInfo.setLastModifiedText(new SimpleDateFormat("yyyy/MM/dd HH:mm").format(fileInfo.getLastModified()));
                     fileInfo.setFileType(DocumentsContract.Document.MIME_TYPE_DIR.equals(mimeType) ? null : mimeType);
                     fileInfo.setSelectType(FileInfo.SelectType.SELECT_TYPE_NONE);
-                    fileInfo.setFile2(new MediaFile(imageUri));
+                    fileInfo.setFile2(new MediaFile(mediaUri));
                     typeList.add(fileInfo);
                 }
             } finally {

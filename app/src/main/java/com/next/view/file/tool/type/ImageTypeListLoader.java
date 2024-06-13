@@ -13,18 +13,19 @@ import java.util.ArrayList;
  */
 public class ImageTypeListLoader extends TypeListLoader {
 
-    //图片类型
-    public static final String[] IMAGE_MIME_TYPE = {
-            "image/jpeg",
-            "image/png",
-            "image/gif",
-            "image/bmp",
-            "image/webp"
+    //图片后缀
+    public static final String[] IMAGE_EXTENSION = {
+            ".jpg",
+            ".jpeg",
+            ".png",
+            ".gif",
+            ".webp",
+            ".bmp"
     };
 
     @Override
     public ArrayList<FileInfo> getTypeList() {
-        return this.getTypeList(IMAGE_MIME_TYPE);
+        return this.getTypeList(IMAGE_EXTENSION);
     }
 
     @Override

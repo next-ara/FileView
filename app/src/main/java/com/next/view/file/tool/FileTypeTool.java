@@ -2,6 +2,11 @@ package com.next.view.file.tool;
 
 import com.next.view.file.R;
 import com.next.view.file.info.FileInfo;
+import com.next.view.file.tool.type.AudioTypeListLoader;
+import com.next.view.file.tool.type.ImageTypeListLoader;
+import com.next.view.file.tool.type.VideoTypeListLoader;
+
+import java.util.Arrays;
 
 /**
  * ClassName:文件类型工具类
@@ -43,21 +48,20 @@ public class FileTypeTool {
             return FileType.FILE_TYPE_FOLDER;
         }
 
-        String mimeType = fileInfo.getFileType();
-        return switch (mimeType) {
-            case "image/jpeg", "image/png", "image/gif", "image/bmp", "image/webp" ->
-                    FileType.FILE_TYPE_IMAGE;
-            case "video/mp4", "video/3gpp", "video/x-msvideo", "video/quicktime", "video/mpeg", "video/webm", "video/x-matroska", "video/x-flv" ->
-                    FileType.FILE_TYPE_VIDEO;
-            case "audio/mpeg", "audio/x-wav", "audio/amr-wb", "audio/amr", "audio/aac", "application/ogg", "audio/ogg", "audio/x-flac", "audio/midi", "audio/x-midi", "audio/x-aiff", "audio/aiff", "audio/basic" ->
-                    FileType.FILE_TYPE_AUDIO;
-            case "application/pdf", "application/msword", "application/vnd.openxmlformats-officedocument.wordprocessingml.document", "application/vnd.ms-excel", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "application/vnd.oasis.opendocument.text", "application/vnd.oasis.opendocument.presentation", "application/vnd.oasis.opendocument.spreadsheet", "text/plain", "application/rtf", "text/html", "application/xml", "text/xml" ->
-                    FileType.FILE_TYPE_DOCUMENT;
-            case "application/vnd.android.package-archive" -> FileType.FILE_TYPE_APPLICATION;
-            case "application/x-rar-compressed", "application/zip", "multipart/x-zip", "application/octet-stream", "application/x-gzip", "application/gzip", "application/x-bzip2" ->
-                    FileType.FILE_TYPE_ZIP;
-            default -> FileType.FILE_TYPE_OTHER;
-        };
+        String fileExtension = getFileExtension(fileInfo.getFileName());
+        if (Arrays.binarySearch(AudioTypeListLoader.AUDIO_EXTENSION, fileExtension) > 0) {
+            return FileType.FILE_TYPE_AUDIO;
+        }
+
+        if (Arrays.binarySearch(ImageTypeListLoader.IMAGE_EXTENSION, fileExtension) > 0) {
+            return FileType.FILE_TYPE_IMAGE;
+        }
+
+        if (Arrays.binarySearch(VideoTypeListLoader.VIDEO_EXTENSION, fileExtension) > 0) {
+            return FileType.FILE_TYPE_VIDEO;
+        }
+
+        return FileType.FILE_TYPE_OTHER;
     }
 
     /**
@@ -74,8 +78,23 @@ public class FileTypeTool {
             case FileType.FILE_TYPE_AUDIO -> R.drawable.next_ic_file_audio;
             case FileType.FILE_TYPE_DOCUMENT -> R.drawable.next_ic_file_document;
             case FileType.FILE_TYPE_APPLICATION -> R.drawable.next_ic_file_apk;
-            case FileType.FILE_TYPE_OTHER -> R.drawable.next_ic_file_zip;
+            case FileType.FILE_TYPE_ZIP -> R.drawable.next_ic_file_zip;
             default -> R.drawable.next_ic_file_other;
         };
+    }
+
+    /**
+     * 获取文件后缀名
+     *
+     * @param fileName 文件名
+     * @return 文件后缀名
+     */
+    public static String getFileExtension(String fileName) {
+        int dotIndex = fileName.lastIndexOf('.');
+        if (dotIndex == -1) {
+            return "";
+        }
+
+        return fileName.substring(dotIndex);
     }
 }

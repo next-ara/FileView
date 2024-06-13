@@ -13,21 +13,24 @@ import java.util.ArrayList;
  */
 public class VideoTypeListLoader extends TypeListLoader {
 
-    //视频类型
-    public static final String[] VIDEO_MIME_TYPE = {
-            "video/mp4",
-            "video/3gpp",
-            "video/x-msvideo",
-            "video/quicktime",
-            "video/mpeg",
-            "video/webm",
-            "video/x-matroska",
-            "video/x-flv"
+    //视频后缀
+    public static final String[] VIDEO_EXTENSION = {
+            ".mp4",
+            ".3gp",
+            ".avi",
+            ".mov",
+            ".mpeg",
+            ".mpg",
+            ".m1v",
+            ".m2v",
+            ".webm",
+            ".mkv",
+            ".flv"
     };
 
     @Override
     public ArrayList<FileInfo> getTypeList() {
-        return this.getTypeList(VIDEO_MIME_TYPE);
+        return this.getTypeList(VIDEO_EXTENSION);
     }
 
     @Override

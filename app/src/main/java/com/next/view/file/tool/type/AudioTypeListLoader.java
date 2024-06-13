@@ -13,26 +13,24 @@ import java.util.ArrayList;
  */
 public class AudioTypeListLoader extends TypeListLoader {
 
-    //音频类型
-    public static final String[] AUDIO_MIME_TYPE = {
-            "audio/mpeg",
-            "audio/x-wav",
-            "audio/amr-wb",
-            "audio/amr",
-            "audio/aac",
-            "application/ogg",
-            "audio/ogg",
-            "audio/x-flac",
-            "audio/midi",
-            "audio/x-midi",
-            "audio/x-aiff",
-            "audio/aiff",
-            "audio/basic"
+    //音频后缀
+    public static final String[] AUDIO_EXTENSION = {
+            ".mp3",
+            ".wav",
+            ".amr",
+            ".aac",
+            ".ogg",
+            ".flac",
+            ".mid",
+            ".midi",
+            ".aiff",
+            ".aif",
+            ".au",
     };
 
     @Override
     public ArrayList<FileInfo> getTypeList() {
-        return this.getTypeList(AUDIO_MIME_TYPE);
+        return this.getTypeList(AUDIO_EXTENSION);
     }
 
     @Override
