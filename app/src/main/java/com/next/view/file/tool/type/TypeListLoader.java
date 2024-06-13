@@ -88,7 +88,7 @@ abstract public class TypeListLoader {
                     fileInfo.setFileName(name);
                     fileInfo.setFileSize(FileTool.formetFileSize(size));
                     fileInfo.setDirectory(DocumentsContract.Document.MIME_TYPE_DIR.equals(mimeType));
-                    fileInfo.setLastModified(lastModified);
+                    fileInfo.setLastModified(lastModified * 1000);
                     fileInfo.setLastModifiedText(new SimpleDateFormat("yyyy/MM/dd HH:mm").format(fileInfo.getLastModified()));
                     fileInfo.setFileType(DocumentsContract.Document.MIME_TYPE_DIR.equals(mimeType) ? null : mimeType);
                     fileInfo.setSelectType(FileInfo.SelectType.SELECT_TYPE_NONE);

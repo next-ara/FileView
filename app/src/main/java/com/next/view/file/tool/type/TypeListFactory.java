@@ -64,5 +64,11 @@ public class TypeListFactory {
         this.typeListLoaders.add(new AudioTypeListLoader());
         //视频类型列表加载器注册
         this.typeListLoaders.add(new VideoTypeListLoader());
+        //文档类型列表加载器注册
+        this.typeListLoaders.add(new DocumentTypeListLoader());
+        //压缩包类型列表加载器注册
+        this.typeListLoaders.add(new ZipTypeListLoader());
+        //安装包类型列表加载器注册
+        this.typeListLoaders.add(new InstallTypeListLoader());
     }
 }

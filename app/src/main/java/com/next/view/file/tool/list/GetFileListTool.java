@@ -55,12 +55,8 @@ public class GetFileListTool {
     //当前路径
     private String nowPath;
 
-    //文件信息对象列表
-    private ArrayList<FileInfo> fileInfoList;
-
     public GetFileListTool() {
         this.factory = new FileListFactory();
-        this.fileInfoList = new ArrayList<>();
     }
 
     /**
@@ -82,8 +78,7 @@ public class GetFileListTool {
 
         FileListFactory.FileListInfo fileListInfo = this.factory.getFileList(path);
         this.parentFile = fileListInfo.getParentFile();
-        this.fileInfoList = fileListInfo.getChildFileList();
-        list.addAll(this.fileInfoList);
+        list.addAll(fileListInfo.getChildFileList());
 
         if (!list.isEmpty()) {
             //筛选隐藏文件和显示模式
@@ -153,7 +148,6 @@ public class GetFileListTool {
      * 初始化数据
      */
     private void initData() {
-        this.fileInfoList.clear();
         this.parentFile = null;
         this.nowPath = null;
     }

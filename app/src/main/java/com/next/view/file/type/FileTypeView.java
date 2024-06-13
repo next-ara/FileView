@@ -16,10 +16,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.SimpleItemAnimator;
 
-import com.next.module.filehelper.TypeQueryTool;
-import com.next.module.filehelper.config.FileManageConfig;
-import com.next.module.filehelper.info.FileInfo;
 import com.next.view.file.R;
+import com.next.view.file.info.FileInfo;
 import com.next.view.file.manage.FileManageAdapter;
 import com.next.view.file.tool.DeviceTool;
 import com.next.view.loading.LoadingView;
@@ -35,19 +33,7 @@ import java.util.Objects;
  * @time 2023/8/22
  * @auditor
  */
-public class FileTypeView extends LinearLayout implements FileManageAdapter.FileClickListener {
-
-    //文件类型
-    public static class FileType {
-        //自定义类型
-        public static final int FILE_TYPE_CUSTOM = -1;
-        //图片类型
-        public static final int FILE_TYPE_IMAGE = 0;
-        //音频类型
-        public static final int FILE_TYPE_AUDIO = 1;
-        //视频类型
-        public static final int FILE_TYPE_VIDEO = 2;
-    }
+public class FileTypeView extends LinearLayout {
 
     //文件加载监听接口
     public interface OnFileLoadListener {
@@ -60,18 +46,7 @@ public class FileTypeView extends LinearLayout implements FileManageAdapter.File
         void onFileLoadComplete(ArrayList<FileInfo> list);
     }
 
-    //文件打开监听接口
-    public interface OnFileOpenListener {
-
-        /**
-         * 文件打开
-         *
-         * @param fileInfo 文件信息对象
-         */
-        void onFileOpen(FileInfo fileInfo);
-    }
-
-    //文件管理列表控件
+    //文件类型列表控件
     private RecyclerView fileTypeView;
 
     //没有文件提示控件
@@ -84,25 +59,16 @@ public class FileTypeView extends LinearLayout implements FileManageAdapter.File
     private LoadingView loadingView;
 
     //文件点击监听接口
-    private FileManageAdapter.FileClickListener fileClickListenerObj;
+    private FileManageAdapter.FileClickListener fileClickListener;
 
     //文件管理适配对象
     private FileManageAdapter adapterObj;
-
-    //文件排列顺序
-    private int fileSortOrder = FileManageConfig.FileSort.SORT_NO;
 
     //Activity对象
     private Activity activity;
 
     //文件加载监听接口
     private OnFileLoadListener onFileLoadListener;
-
-    //文件打开监听接口
-    private OnFileOpenListener onFileOpenListener;
-
-    //文件信息对象列表
-    private ArrayList<FileInfo> fileInfoObjList = new ArrayList<>();
 
     public FileTypeView(@NonNull Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);

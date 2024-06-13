@@ -3,8 +3,11 @@ package com.next.view.file.tool;
 import com.next.view.file.R;
 import com.next.view.file.info.FileInfo;
 import com.next.view.file.tool.type.AudioTypeListLoader;
+import com.next.view.file.tool.type.DocumentTypeListLoader;
 import com.next.view.file.tool.type.ImageTypeListLoader;
+import com.next.view.file.tool.type.InstallTypeListLoader;
 import com.next.view.file.tool.type.VideoTypeListLoader;
+import com.next.view.file.tool.type.ZipTypeListLoader;
 
 import java.util.Arrays;
 
@@ -29,8 +32,8 @@ public class FileTypeTool {
         public static final int FILE_TYPE_AUDIO = 3;
         //文档
         public static final int FILE_TYPE_DOCUMENT = 4;
-        //应用程序
-        public static final int FILE_TYPE_APPLICATION = 5;
+        //安装包
+        public static final int FILE_TYPE_INSTALL = 5;
         //压缩包
         public static final int FILE_TYPE_ZIP = 6;
         //其他
@@ -61,6 +64,18 @@ public class FileTypeTool {
             return FileType.FILE_TYPE_VIDEO;
         }
 
+        if (Arrays.binarySearch(DocumentTypeListLoader.DOCUMENT_EXTENSION, fileExtension) > 0) {
+            return FileType.FILE_TYPE_DOCUMENT;
+        }
+
+        if (Arrays.binarySearch(ZipTypeListLoader.ZIP_EXTENSION, fileExtension) > 0) {
+            return FileType.FILE_TYPE_ZIP;
+        }
+
+        if (Arrays.binarySearch(InstallTypeListLoader.INSTALL_EXTENSION, fileExtension) > 0) {
+            return FileType.FILE_TYPE_INSTALL;
+        }
+
         return FileType.FILE_TYPE_OTHER;
     }
 
@@ -77,7 +92,7 @@ public class FileTypeTool {
             case FileType.FILE_TYPE_VIDEO -> R.drawable.next_ic_file_video;
             case FileType.FILE_TYPE_AUDIO -> R.drawable.next_ic_file_audio;
             case FileType.FILE_TYPE_DOCUMENT -> R.drawable.next_ic_file_document;
-            case FileType.FILE_TYPE_APPLICATION -> R.drawable.next_ic_file_apk;
+            case FileType.FILE_TYPE_INSTALL -> R.drawable.next_ic_file_apk;
             case FileType.FILE_TYPE_ZIP -> R.drawable.next_ic_file_zip;
             default -> R.drawable.next_ic_file_other;
         };
