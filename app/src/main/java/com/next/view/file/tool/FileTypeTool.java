@@ -52,27 +52,27 @@ public class FileTypeTool {
         }
 
         String fileExtension = getFileExtension(fileInfo.getFileName());
-        if (Arrays.binarySearch(AudioTypeListLoader.AUDIO_EXTENSION, fileExtension) > 0) {
+        if (Arrays.binarySearch(AudioTypeListLoader.AUDIO_EXTENSION, fileExtension) >= 0) {
             return FileType.FILE_TYPE_AUDIO;
         }
 
-        if (Arrays.binarySearch(ImageTypeListLoader.IMAGE_EXTENSION, fileExtension) > 0) {
+        if (Arrays.binarySearch(ImageTypeListLoader.IMAGE_EXTENSION, fileExtension) >= 0) {
             return FileType.FILE_TYPE_IMAGE;
         }
 
-        if (Arrays.binarySearch(VideoTypeListLoader.VIDEO_EXTENSION, fileExtension) > 0) {
+        if (Arrays.binarySearch(VideoTypeListLoader.VIDEO_EXTENSION, fileExtension) >= 0) {
             return FileType.FILE_TYPE_VIDEO;
         }
 
-        if (Arrays.binarySearch(DocumentTypeListLoader.DOCUMENT_EXTENSION, fileExtension) > 0) {
+        if (Arrays.binarySearch(DocumentTypeListLoader.DOCUMENT_EXTENSION, fileExtension) >= 0) {
             return FileType.FILE_TYPE_DOCUMENT;
         }
 
-        if (Arrays.binarySearch(ZipTypeListLoader.ZIP_EXTENSION, fileExtension) > 0) {
+        if (Arrays.binarySearch(ZipTypeListLoader.ZIP_EXTENSION, fileExtension) >= 0) {
             return FileType.FILE_TYPE_ZIP;
         }
 
-        if (Arrays.binarySearch(InstallTypeListLoader.INSTALL_EXTENSION, fileExtension) > 0) {
+        if (Arrays.binarySearch(InstallTypeListLoader.INSTALL_EXTENSION, fileExtension) >= 0) {
             return FileType.FILE_TYPE_INSTALL;
         }
 
