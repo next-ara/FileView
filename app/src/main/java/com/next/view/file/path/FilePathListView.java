@@ -87,8 +87,13 @@ public class FilePathListView extends LinearLayout {
 
         if (this.isChildPath(targetPath)) {
             this.setChildPath(targetPath);
-        } else {
+        } else if (this.isParentPath(targetPath)) {
             this.setParentPath(targetPath);
+        } else {
+            //如果既不是子路径也不是父路径，则返回根路径
+            this.setNowPath(FilePathTool.ROOT_PATH);
+            //然后再设置目标路径
+            this.setNowPath(targetPath);
         }
 
         this.nowPath = targetPath;
@@ -153,6 +158,17 @@ public class FilePathListView extends LinearLayout {
     private boolean isChildPath(String targetPath) {
         //如果当前路径跟目标路径不同且目标路径包含当前路径
         return !this.nowPath.equals(targetPath) && targetPath.contains(this.nowPath);
+    }
+
+    /**
+     * 是否是父路径
+     *
+     * @param targetPath 目标路径
+     * @return 是否是父路径
+     */
+    private boolean isParentPath(String targetPath) {
+        //如果当前路径跟目标路径不同且当前路径包含目标路径
+        return !this.nowPath.equals(targetPath) && this.nowPath.contains(targetPath);
     }
 
     /**
