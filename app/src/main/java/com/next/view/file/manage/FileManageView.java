@@ -116,9 +116,11 @@ public class FileManageView extends LinearLayout {
     }
 
     /**
-     * 加载路径
+     * 加载列表
+     *
+     * @param path 路径
      */
-    public void loadPath(String path) {
+    public void loadList(String path) {
         if (this.isLoading) {
             return;
         }
@@ -169,9 +171,9 @@ public class FileManageView extends LinearLayout {
     /**
      * 刷新列表
      */
-    public void refreshPath() {
+    public void refreshList() {
         String path = this.getFileListTool.getNowPath();
-        this.loadPath(path);
+        this.loadList(path);
     }
 
     /**
@@ -189,7 +191,7 @@ public class FileManageView extends LinearLayout {
             return false;
         }
 
-        this.loadPath(FilePathTool.getParentPath(nowPath));
+        this.loadList(FilePathTool.getParentPath(nowPath));
         return true;
     }
 
@@ -474,7 +476,7 @@ public class FileManageView extends LinearLayout {
     private void unSelectModeItemClick(FileInfo fileInfo) {
         if (fileInfo.isDirectory()) {
             String path = FilePathTool.getChildPath(this.getFileListTool.getNowPath(), fileInfo.getFileName());
-            this.loadPath(path);
+            this.loadList(path);
         }
     }
 

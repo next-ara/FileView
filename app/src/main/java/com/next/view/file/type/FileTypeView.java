@@ -1,16 +1,22 @@
 package com.next.view.file.type;
 
-import android.app.Activity;
 import android.content.Context;
 import android.graphics.Rect;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
+import android.view.animation.TranslateAnimation;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.StringRes;
+import androidx.core.view.animation.PathInterpolatorCompat;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -20,10 +26,11 @@ import com.next.view.file.R;
 import com.next.view.file.info.FileInfo;
 import com.next.view.file.manage.FileManageAdapter;
 import com.next.view.file.tool.DeviceTool;
+import com.next.view.file.tool.list.GetFileListTool;
+import com.next.view.file.tool.type.GetTypeListTool;
 import com.next.view.loading.LoadingView;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Objects;
 
 /**
@@ -43,7 +50,7 @@ public class FileTypeView extends LinearLayout {
          *
          * @param list 文件信息对象列表
          */
-        void onFileLoadComplete(ArrayList<FileInfo> list);
+        void onLoadComplete(ArrayList<FileInfo> list);
     }
 
     //文件类型列表控件
@@ -58,248 +65,250 @@ public class FileTypeView extends LinearLayout {
     //加载控件
     private LoadingView loadingView;
 
-    //文件点击监听接口
-    private FileManageAdapter.FileClickListener fileClickListener;
-
     //文件管理适配对象
     private FileManageAdapter adapterObj;
-
-    //Activity对象
-    private Activity activity;
 
     //文件加载监听接口
     private OnFileLoadListener onFileLoadListener;
 
+    //主线程Handler
+    private Handler mainHandler;
+
+    //获取类型列表工具对象
+    private GetTypeListTool getTypeListTool;
+
+    //选择模式
+    private int selectMode = GetFileListTool.SelectMode.SELECT_CLOSE;
+
+    //是否正在加载
+    private boolean isLoading = false;
+
     public FileTypeView(@NonNull Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
-        this.initView();
+        this.init();
     }
 
     /**
      * 初始化
+     */
+    private void init() {
+        //初始化视图
+        this.initView();
+        //初始化数据
+        this.initData();
+    }
+
+    /**
+     * 加载列表
      *
-     * @param activity Activity对象
      * @param fileType 文件类型
      */
-    public void init(Activity activity, int fileType) {
-        this.activity = activity;
+    public void loadList(String fileType) {
+        if (this.isLoading) {
+            return;
+        }
 
-        //初始化列表控件
-        this.initListView();
+        AlphaAnimation alphaAnimation = new AlphaAnimation(1f, 0f);
+        alphaAnimation.setDuration(150);
+        alphaAnimation.setInterpolator(PathInterpolatorCompat.create(0f, 1f, 1f, 1f));
+        alphaAnimation.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
 
-        new Thread(() -> {
-            switch (fileType) {
-                case FileType.FILE_TYPE_IMAGE:
-                    this.fileInfoObjList = TypeQueryTool.queryAllImageTypeFile();
-                    break;
-                case FileType.FILE_TYPE_AUDIO:
-                    this.fileInfoObjList = TypeQueryTool.queryAllAudioTypeFile();
-                    break;
-                default:
-                    this.fileInfoObjList = TypeQueryTool.queryAllVideoTypeFile();
-                    break;
             }
 
-            this.activity.runOnUiThread(() -> {
-                this.adapterObj.setFileInfoList(this.fileInfoObjList);
-                //刷新适配器视图
-                this.notifyDataSetChanged();
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                //显示加载
+                FileTypeView.this.showLoading();
 
-                //设置没有文件提示
-                this.setNoFileTips();
-                //发送文件加载监听
-                this.sendFileLoadListener();
-            });
-        }).start();
+                new Thread(() -> {
+                    ArrayList<FileInfo> fileInfoObjList = FileTypeView.this.getTypeListTool.getFileInfoList(fileType, FileTypeView.this.selectMode);
+                    FileTypeView.this.adapterObj.setFileInfoList(fileInfoObjList);
+                    FileTypeView.this.mainHandler.post(() -> {
+                        //关闭加载
+                        FileTypeView.this.closeLoading();
+                        FileTypeView.this.adapterObj.notifyDataSetChanged();
+                        FileTypeView.this.sendLoadComplete();
+                    });
+                }).start();
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        });
+
+        this.fileTypeView.startAnimation(alphaAnimation);
     }
 
     /**
-     * 初始化
-     *
-     * @param activity       Activity对象
-     * @param fileSuffixList 文件后缀队列
+     * 刷新列表
      */
-    public void init(Activity activity, ArrayList<String> fileSuffixList) {
-        this.activity = activity;
-
-        //初始化列表控件
-        this.initListView();
-
-        new Thread(() -> {
-            this.fileInfoObjList = TypeQueryTool.queryAllDesignatedTypeFile(fileSuffixList);
-
-            this.activity.runOnUiThread(() -> {
-                this.adapterObj.setFileInfoList(this.fileInfoObjList);
-                //刷新适配器视图
-                this.notifyDataSetChanged();
-
-                //设置没有文件提示
-                this.setNoFileTips();
-                //发送文件加载监听
-                this.sendFileLoadListener();
-            });
-        }).start();
+    public void refreshList() {
+        String fileType = this.getTypeListTool.getNowFileType();
+        this.loadList(fileType);
     }
 
     /**
-     * 搜索
+     * 设置文件选择类型
      *
-     * @param charSequence 文本
+     * @param isSelect 是否选择
+     * @param fileInfo 文件信息对象
      */
-    public void search(CharSequence charSequence) {
-        if (this.adapterObj != null) {
-            this.adapterObj.getFilter().filter(charSequence);
+    public void setItemSelectType(boolean isSelect, FileInfo fileInfo) {
+        if (this.selectMode == GetFileListTool.SelectMode.SELECT_CLOSE) {
+            return;
+        }
+
+        if (this.selectMode == GetFileListTool.SelectMode.SELECT_FILE && fileInfo.isDirectory()) {
+            return;
+        }
+
+        //设置选择类型
+        fileInfo.setSelectType(isSelect ? FileInfo.SelectType.SELECT_TYPE_SELECT : FileInfo.SelectType.SELECT_TYPE_UNSELECT);
+        //通知数据更新
+        this.adapterObj.notifyItemChanged(fileInfo);
+    }
+
+    /**
+     * 全选
+     */
+    public void selectAll() {
+        ArrayList<FileInfo> list = this.adapterObj.getFileInfoList();
+        for (FileInfo fileInfo : list) {
+            //设置文件选择类型
+            this.setItemSelectType(true, fileInfo);
         }
     }
 
     /**
-     * 获取文件列表长度
-     *
-     * @return 长度
+     * 取消全选
      */
-    public int size() {
-        return this.fileInfoObjList.size();
+    public void unSelectAll() {
+        ArrayList<FileInfo> list = this.adapterObj.getFileInfoList();
+        for (FileInfo fileInfo : list) {
+            //设置文件选择类型
+            this.setItemSelectType(false, fileInfo);
+        }
     }
 
     /**
-     * 获取当前选中模式
-     *
-     * @return 选中模式
+     * 关闭选择模式
      */
-    public int getSelectMode() {
-        return this.adapterObj.getSelectMode();
+    public void closeSelect() {
+        if (this.selectMode == GetFileListTool.SelectMode.SELECT_CLOSE) {
+            return;
+        }
+
+        //设置选择模式
+        this.selectMode = GetFileListTool.SelectMode.SELECT_CLOSE;
+        ArrayList<FileInfo> fileInfoList = this.adapterObj.getFileInfoList();
+        this.getTypeListTool.setItemSelectMode(fileInfoList, this.selectMode);
+        for (int i = 0; i < fileInfoList.size(); i++) {
+            this.adapterObj.notifyItemChanged(i);
+        }
     }
 
     /**
-     * 设置选中模式
+     * 获取文件信息对象列表
      *
-     * @param selectMode 选中模式
+     * @return 文件信息对象列表
      */
-    public void setSelectMode(int selectMode) {
-        this.adapterObj.setSelectMode(selectMode);
+    public ArrayList<FileInfo> getFileInfoList() {
+        return this.adapterObj.getFileInfoList();
     }
 
     /**
-     * 获取选中的文件信息对象Map
+     * 获取选中的文件信息对象列表
      *
-     * @return 文件信息对象Map
+     * @return 文件信息对象列表
      */
-    public HashMap<String, FileInfo> getSelectFileInfoList() {
+    public ArrayList<FileInfo> getSelectFileInfoList() {
         return this.adapterObj.getSelectFileInfoList();
     }
 
     /**
-     * 全选文件
-     */
-    public void selectAll() {
-        int selectMode = this.getSelectMode();
-
-        if (selectMode == FileManageAdapter.SelectMode.SELECT_CLOSE) {
-            return;
-        }
-
-        for (int i = 0; i < fileInfoObjList.size(); i++) {
-            FileInfo fileInfo = fileInfoObjList.get(i);
-
-            if (fileInfo.getFileType().equals(FileInfo.FileType.TYPE_FOLDER)) {
-                if (selectMode == FileManageAdapter.SelectMode.SELECT_ALL || selectMode == FileManageAdapter.SelectMode.SELECT_FOLDER) {
-                    this.adapterObj.addSelectFile(fileInfo);
-                }
-            } else {
-                if (selectMode == FileManageAdapter.SelectMode.SELECT_ALL || selectMode == FileManageAdapter.SelectMode.SELECT_FILE) {
-                    this.adapterObj.addSelectFile(fileInfo);
-                }
-            }
-        }
-    }
-
-    /**
-     * 取消选择
-     */
-    public void cancelSelect() {
-        if (this.getSelectMode() == FileManageAdapter.SelectMode.SELECT_CLOSE) {
-            return;
-        }
-
-        this.adapterObj.getSelectFileInfoList().clear();
-        this.adapterObj.notifyDataSetChanged();
-    }
-
-    /**
-     * 设置文件选中
+     * 获取当前文件类型
      *
-     * @param fileInfo 文件信息对象
+     * @return 文件类型
      */
-    public void setFileSelect(FileInfo fileInfo) {
-        int selectMode = this.getSelectMode();
-
-        if (selectMode == FileManageAdapter.SelectMode.SELECT_CLOSE) {
-            return;
-        }
-
-        if (selectMode == FileManageAdapter.SelectMode.SELECT_ALL || selectMode == FileManageAdapter.SelectMode.SELECT_FILE) {
-            this.adapterObj.addSelectFile(fileInfo);
-        }
+    public String getNowFileType() {
+        return this.getTypeListTool.getNowFileType();
     }
 
     /**
-     * 释放
+     * 设置文件点击监听接口
+     *
+     * @param fileClickListenerObj 文件点击监听接口
      */
-    public void recycle() {
-        this.fileClickListenerObj = null;
-        this.onFileLoadListener = null;
-        this.onFileOpenListener = null;
+    public void setFileClickListener(FileManageAdapter.FileClickListener fileClickListenerObj) {
+        this.adapterObj.setFileClickListener(fileClickListenerObj);
     }
 
     /**
-     * 初始化列表控件
+     * 添加文件点击监听接口
+     *
+     * @param fileClickListenerObj 文件点击监听接口
      */
-    private void initListView() {
-        this.initData();
+    public void addFileClickListener(FileManageAdapter.FileClickListener fileClickListenerObj) {
+        this.adapterObj.addFileClickListener(fileClickListenerObj);
+    }
 
-        LinearLayoutManager layoutManager;
+    /**
+     * 显示列表动画
+     */
+    private void showListAnim() {
+        TranslateAnimation translateAnimation = new TranslateAnimation(0, 0, this.fileTypeView.getHeight(), 0);
+        translateAnimation.setDuration(500);
+        translateAnimation.setInterpolator(PathInterpolatorCompat.create(0f, 1f, 0f, 1f));
+        this.fileTypeView.startAnimation(translateAnimation);
+    }
 
-        //是否需要屏幕适配
-        if (this.isNeedScreenAdaptation()) {
-            layoutManager = new GridLayoutManager(this.getContext(), 2);
+    /**
+     * 显示加载中视图
+     */
+    private void showLoading() {
+        this.loadingView.setVisibility(VISIBLE);
+        this.noFileTipsView.setVisibility(GONE);
+        this.adapterObj.clear();
+        this.isLoading = true;
+    }
+
+    /**
+     * 关闭加载中视图
+     */
+    private void closeLoading() {
+        this.loadingView.setVisibility(GONE);
+        this.noFileTipsView.setVisibility(GONE);
+        this.isLoading = false;
+
+        if (this.adapterObj.getFileInfoList().isEmpty()) {
+            this.showNoTips(this.getString(R.string.file_manage_no_file_tips));
         } else {
-            layoutManager = new LinearLayoutManager(getContext());
+            //显示列表动画
+            this.showListAnim();
         }
-
-        this.fileTypeView.setLayoutManager(layoutManager);
-        this.fileTypeView.addItemDecoration(new RecyclerView.ItemDecoration() {
-            @Override
-            public void getItemOffsets(@NonNull Rect outRect, int itemPosition, @NonNull RecyclerView parent) {
-                super.getItemOffsets(outRect, itemPosition, parent);
-                //是否需要屏幕适配
-                if (isNeedScreenAdaptation()) {
-                    if ((itemPosition + 1) % 2 == 0) {
-                        outRect.left = (int) getContext().getResources().getDimension(R.dimen.dp_4);
-                    } else {
-                        outRect.right = (int) getContext().getResources().getDimension(R.dimen.dp_4);
-                    }
-                }
-
-                outRect.bottom = (int) getContext().getResources().getDimension(R.dimen.dp_8);
-            }
-        });
-
-        this.fileTypeView.setAdapter(adapterObj);
-        this.setOnSearchListener();
-        ((SimpleItemAnimator) Objects.requireNonNull(this.fileTypeView.getItemAnimator())).setSupportsChangeAnimations(false);
-        this.showLoading();
     }
 
     /**
-     * 设置搜索监听
+     * 显示没有文件提示视图
      */
-    private void setOnSearchListener() {
-        this.adapterObj.setOnSearchListener(() -> {
-            //设置没有文件提示
-            this.setNoFileTips();
-            //发送文件加载监听
-            this.sendFileLoadListener();
-        });
+    private void showNoTips(String tips) {
+        this.noFileTipsView.setVisibility(VISIBLE);
+        this.noFileTextView.setText(tips);
+        this.noFileTextView.setVisibility(this.isNeedScreenAdaptation() ? GONE : VISIBLE);
+    }
+
+    /**
+     * 获取字符串
+     *
+     * @param stringResId 字符串资源Id
+     * @return 字符串
+     */
+    private String getString(@StringRes int stringResId) {
+        return this.getContext().getString(stringResId);
     }
 
     /**
@@ -317,160 +326,78 @@ public class FileTypeView extends LinearLayout {
      * 加载数据
      */
     private void initData() {
-        this.fileInfoObjList.clear();
-
-        if (this.adapterObj == null) {
-            this.adapterObj = new FileManageAdapter(this.getContext());
-        }
-
-        this.adapterObj.setFileClickListener(this);
-    }
-
-    /**
-     * 点击文件处理
-     *
-     * @param view     控件
-     * @param fileInfo 文件信息对象
-     */
-    private void clickFileHandle(View view, FileInfo fileInfo) {
-        if (this.getSelectMode() == FileManageAdapter.SelectMode.SELECT_CLOSE) {
-            this.selectModeCloseHandle(fileInfo);
-        } else {
-            this.selectModeOpenHandle(fileInfo);
-        }
-
-        if (this.fileClickListenerObj != null) {
-            this.fileClickListenerObj.onClick(view, fileInfo);
-        }
-    }
-
-    /**
-     * 开启选中模式点击处理
-     *
-     * @param fileInfo 文件信息对象
-     */
-    private void selectModeOpenHandle(FileInfo fileInfo) {
-        int selectMode = this.getSelectMode();
-        if (selectMode == FileManageAdapter.SelectMode.SELECT_ALL) {
-            this.changeSelectState(fileInfo);
-        } else if (selectMode == FileManageAdapter.SelectMode.SELECT_FILE) {
-            if (!fileInfo.getFileType().equals(FileInfo.FileType.TYPE_FOLDER)) {
-                this.changeSelectState(fileInfo);
+        //初始化主线程Handler
+        this.mainHandler = this.getMainHandler();
+        //初始化获取文件列表工具对象
+        this.getTypeListTool = new GetTypeListTool();
+        //初始化文件管理适配器对象
+        this.adapterObj = new FileManageAdapter(this.getContext());
+        //添加文件点击监听
+        this.addFileClickListener(new FileManageAdapter.FileClickListener() {
+            @Override
+            public void onClick(FileInfo fileInfo) {
+                FileTypeView.this.itemClick(fileInfo);
             }
-        } else {
-            if (fileInfo.getFileType().equals(FileInfo.FileType.TYPE_FOLDER)) {
-                this.changeSelectState(fileInfo);
+
+            @Override
+            public void onLongClick(FileInfo fileInfo) {
+                FileTypeView.this.itemLongClick(fileInfo);
             }
-        }
-    }
-
-    /**
-     * 修改选中状态
-     *
-     * @param fileInfo 文件信息对象
-     */
-    private void changeSelectState(FileInfo fileInfo) {
-        if (this.adapterObj.fileIsSelect(fileInfo)) {
-            this.adapterObj.deleteSelectFile(fileInfo);
-        } else {
-            this.adapterObj.addSelectFile(fileInfo);
-        }
-    }
-
-    /**
-     * 关闭选中模式点击处理
-     *
-     * @param fileInfo 文件信息对象
-     */
-    private void selectModeCloseHandle(FileInfo fileInfo) {
-        if (this.onFileOpenListener != null) {
-            this.onFileOpenListener.onFileOpen(fileInfo);
-        }
-    }
-
-    /**
-     * 长按文件处理
-     *
-     * @param view     控件
-     * @param fileInfo 文件信息对象
-     */
-    private void longClickFileHandle(View view, FileInfo fileInfo) {
-        if (this.fileClickListenerObj != null) {
-            this.fileClickListenerObj.onLongClick(view, fileInfo);
-        }
-    }
-
-    /**
-     * 显示加载中视图
-     */
-    private void showLoading() {
-        this.activity.runOnUiThread(() -> {
-            this.loadingView.setVisibility(VISIBLE);
-            this.noFileTipsView.setVisibility(GONE);
-            this.fileTypeView.setVisibility(GONE);
         });
+
+        this.fileTypeView.setLayoutManager(this.isNeedScreenAdaptation() ? new GridLayoutManager(this.getContext(), 2) : new LinearLayoutManager(getContext()));
+        this.fileTypeView.addItemDecoration(new RecyclerView.ItemDecoration() {
+            @Override
+            public void getItemOffsets(@NonNull Rect outRect, @NonNull View view, @NonNull RecyclerView parent, @NonNull RecyclerView.State state) {
+                super.getItemOffsets(outRect, view, parent, state);
+
+                int itemPosition = parent.getChildLayoutPosition(view);
+
+                //是否需要屏幕适配
+                if (isNeedScreenAdaptation()) {
+                    if ((itemPosition + 1) % 2 == 0) {
+                        outRect.left = (int) getContext().getResources().getDimension(R.dimen.dp_4);
+                    } else {
+                        outRect.right = (int) getContext().getResources().getDimension(R.dimen.dp_4);
+                    }
+                }
+
+                outRect.bottom = (int) getContext().getResources().getDimension(R.dimen.dp_8);
+            }
+        });
+
+        this.fileTypeView.setAdapter(this.adapterObj);
+        ((SimpleItemAnimator) Objects.requireNonNull(this.fileTypeView.getItemAnimator())).setSupportsChangeAnimations(false);
     }
 
     /**
-     * 显示没有文件提示视图
-     */
-    private void showNoTips() {
-        this.loadingView.setVisibility(GONE);
-        this.noFileTipsView.setVisibility(VISIBLE);
-        this.fileTypeView.setVisibility(GONE);
-
-        this.noFileTextView.setText(activity.getString(R.string.file_manage_no_file_tips));
-        this.noFileTextView.setVisibility(this.isNeedScreenAdaptation() ? GONE : VISIBLE);
-    }
-
-    /**
-     * 显示没有文件提示视图
+     * 文件点击事件
      *
-     * @param tips 提示
+     * @param fileInfo 文件信息对象
      */
-    private void showNoTips(String tips) {
-        this.loadingView.setVisibility(GONE);
-        this.noFileTipsView.setVisibility(VISIBLE);
-        this.fileTypeView.setVisibility(GONE);
-
-        this.noFileTextView.setText(tips);
-        this.noFileTextView.setVisibility(this.isNeedScreenAdaptation() ? GONE : VISIBLE);
-    }
-
-    /**
-     * 显示文件管理视图
-     */
-    private void showFileManage() {
-        this.loadingView.setVisibility(GONE);
-        this.noFileTipsView.setVisibility(GONE);
-        this.fileTypeView.setVisibility(VISIBLE);
-    }
-
-    /**
-     * 发送文件加载监听
-     */
-    private void sendFileLoadListener() {
-        if (this.onFileLoadListener != null) {
-            this.onFileLoadListener.onFileLoadComplete(this.noFileTipsView.getVisibility() == VISIBLE ? new ArrayList<>() : this.adapterObj.getFileInfoList());
+    private void itemClick(FileInfo fileInfo) {
+        if (this.selectMode != GetFileListTool.SelectMode.SELECT_CLOSE) {
+            //设置文件选择类型
+            this.setItemSelectType(fileInfo.getSelectType() != FileInfo.SelectType.SELECT_TYPE_SELECT, fileInfo);
         }
     }
 
     /**
-     * 设置没有文件提示
+     * 文件长按事件
+     *
+     * @param fileInfo 文件信息对象
      */
-    private void setNoFileTips() {
-        if (this.adapterObj.getFileInfoList().isEmpty()) {
-            this.showNoTips();
-        } else {
-            this.showFileManage();
+    private void itemLongClick(FileInfo fileInfo) {
+        if (this.selectMode == GetFileListTool.SelectMode.SELECT_CLOSE && !fileInfo.isDirectory()) {
+            //设置选择模式
+            this.selectMode = GetFileListTool.SelectMode.SELECT_FILE;
+            ArrayList<FileInfo> fileInfoList = this.adapterObj.getFileInfoList();
+            this.getTypeListTool.setItemSelectMode(fileInfoList, this.selectMode);
+            fileInfo.setSelectType(FileInfo.SelectType.SELECT_TYPE_SELECT);
+            for (int i = 0; i < fileInfoList.size(); i++) {
+                this.adapterObj.notifyItemChanged(i);
+            }
         }
-    }
-
-    /**
-     * 刷新适配器视图
-     */
-    private void notifyDataSetChanged() {
-        this.activity.runOnUiThread(() -> adapterObj.notifyDataSetChanged());
     }
 
     /**
@@ -483,37 +410,37 @@ public class FileTypeView extends LinearLayout {
         return DeviceTool.isLandscapeScreen(this.getContext()) || DeviceTool.isShortScreen(this.getContext());
     }
 
-    public FileManageAdapter.FileClickListener getFileClickListenerObj() {
-        return fileClickListenerObj;
+    /**
+     * 获取主线程Handler
+     *
+     * @return 主线程Handler
+     */
+    private Handler getMainHandler() {
+        return new Handler(Looper.getMainLooper());
     }
 
-    public void setFileClickListenerObj(FileManageAdapter.FileClickListener fileClickListenerObj) {
-        this.fileClickListenerObj = fileClickListenerObj;
+    /**
+     * 发送文件加载完成监听
+     */
+    private void sendLoadComplete() {
+        if (this.onFileLoadListener != null) {
+            this.onFileLoadListener.onLoadComplete(this.adapterObj.getFileInfoList());
+        }
     }
 
-    public int getFileSortOrder() {
-        return fileSortOrder;
+    public int getSelectMode() {
+        return selectMode;
     }
 
-    public void setFileSortOrder(int fileSortOrder) {
-        this.fileSortOrder = fileSortOrder;
+    public void setSelectMode(int selectMode) {
+        this.selectMode = selectMode;
     }
 
-    @Override
-    public void onClick(View view, FileInfo fileInfo) {
-        this.clickFileHandle(view, fileInfo);
-    }
-
-    @Override
-    public void onLongClick(View view, FileInfo fileInfo) {
-        this.longClickFileHandle(view, fileInfo);
+    public OnFileLoadListener getOnFileLoadListener() {
+        return onFileLoadListener;
     }
 
     public void setOnFileLoadListener(OnFileLoadListener onFileLoadListener) {
         this.onFileLoadListener = onFileLoadListener;
-    }
-
-    public void setOnFileOpenListener(OnFileOpenListener onFileOpenListener) {
-        this.onFileOpenListener = onFileOpenListener;
     }
 }

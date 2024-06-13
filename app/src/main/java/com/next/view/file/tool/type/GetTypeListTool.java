@@ -24,6 +24,9 @@ public class GetTypeListTool {
     //类型列表工厂对象
     private TypeListFactory factory;
 
+    //当前文件类型
+    private String nowFileType;
+
     public GetTypeListTool() {
         this.factory = new TypeListFactory();
     }
@@ -36,6 +39,7 @@ public class GetTypeListTool {
      * @return 文件信息对象列表
      */
     public ArrayList<FileInfo> getFileInfoList(String fileType, int selectMode) {
+        this.nowFileType = fileType;
         ArrayList<FileInfo> list = this.factory.getTypeList(fileType);
 
         if (!list.isEmpty()) {
@@ -72,5 +76,9 @@ public class GetTypeListTool {
             case SelectMode.SELECT_FILE ->
                     fileInfo.setSelectType(fileInfo.isDirectory() ? FileInfo.SelectType.SELECT_TYPE_NONE : FileInfo.SelectType.SELECT_TYPE_UNSELECT);
         }
+    }
+
+    public String getNowFileType() {
+        return nowFileType;
     }
 }
