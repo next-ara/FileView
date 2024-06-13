@@ -26,8 +26,10 @@ public class FileTypeTool {
         public static final int FILE_TYPE_DOCUMENT = 4;
         //应用程序
         public static final int FILE_TYPE_APPLICATION = 5;
+        //压缩包
+        public static final int FILE_TYPE_ZIP = 6;
         //其他
-        public static final int FILE_TYPE_OTHER = 6;
+        public static final int FILE_TYPE_OTHER = 7;
     }
 
     /**
@@ -53,7 +55,7 @@ public class FileTypeTool {
                     FileType.FILE_TYPE_DOCUMENT;
             case "application/vnd.android.package-archive" -> FileType.FILE_TYPE_APPLICATION;
             case "application/x-rar-compressed", "application/zip", "multipart/x-zip", "application/octet-stream", "application/x-gzip", "application/gzip", "application/x-bzip2" ->
-                    R.drawable.next_ic_file_zip;
+                    FileType.FILE_TYPE_ZIP;
             default -> FileType.FILE_TYPE_OTHER;
         };
     }

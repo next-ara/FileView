@@ -58,5 +58,11 @@ public class TypeListFactory {
      */
     private void initTypeListLoaders() {
         this.typeListLoaders = new ArrayList<>();
+        //图片类型列表加载器注册
+        this.typeListLoaders.add(new ImageTypeListLoader());
+        //音频类型列表加载器注册
+        this.typeListLoaders.add(new AudioTypeListLoader());
+        //视频类型列表加载器注册
+        this.typeListLoaders.add(new VideoTypeListLoader());
     }
 }
