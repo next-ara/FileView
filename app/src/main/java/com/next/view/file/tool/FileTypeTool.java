@@ -9,8 +9,6 @@ import com.next.view.file.tool.type.InstallTypeListLoader;
 import com.next.view.file.tool.type.VideoTypeListLoader;
 import com.next.view.file.tool.type.ZipTypeListLoader;
 
-import java.util.Arrays;
-
 /**
  * ClassName:文件类型工具类
  *
@@ -52,27 +50,27 @@ public class FileTypeTool {
         }
 
         String fileExtension = getFileExtension(fileInfo.getFileName());
-        if (Arrays.binarySearch(AudioTypeListLoader.AUDIO_EXTENSION, fileExtension) >= 0) {
+        if (getArrayIndex(AudioTypeListLoader.AUDIO_EXTENSION, fileExtension) >= 0) {
             return FileType.FILE_TYPE_AUDIO;
         }
 
-        if (Arrays.binarySearch(ImageTypeListLoader.IMAGE_EXTENSION, fileExtension) >= 0) {
+        if (getArrayIndex(ImageTypeListLoader.IMAGE_EXTENSION, fileExtension) >= 0) {
             return FileType.FILE_TYPE_IMAGE;
         }
 
-        if (Arrays.binarySearch(VideoTypeListLoader.VIDEO_EXTENSION, fileExtension) >= 0) {
+        if (getArrayIndex(VideoTypeListLoader.VIDEO_EXTENSION, fileExtension) >= 0) {
             return FileType.FILE_TYPE_VIDEO;
         }
 
-        if (Arrays.binarySearch(DocumentTypeListLoader.DOCUMENT_EXTENSION, fileExtension) >= 0) {
+        if (getArrayIndex(DocumentTypeListLoader.DOCUMENT_EXTENSION, fileExtension) >= 0) {
             return FileType.FILE_TYPE_DOCUMENT;
         }
 
-        if (Arrays.binarySearch(ZipTypeListLoader.ZIP_EXTENSION, fileExtension) >= 0) {
+        if (getArrayIndex(ZipTypeListLoader.ZIP_EXTENSION, fileExtension) >= 0) {
             return FileType.FILE_TYPE_ZIP;
         }
 
-        if (Arrays.binarySearch(InstallTypeListLoader.INSTALL_EXTENSION, fileExtension) >= 0) {
+        if (getArrayIndex(InstallTypeListLoader.INSTALL_EXTENSION, fileExtension) >= 0) {
             return FileType.FILE_TYPE_INSTALL;
         }
 
@@ -111,5 +109,23 @@ public class FileTypeTool {
         }
 
         return fileName.substring(dotIndex);
+    }
+
+    /**
+     * 获取数组中的位置
+     *
+     * @param array 数组
+     * @param value 值
+     * @return 位置
+     */
+    private static int getArrayIndex(String[] array, String value) {
+        for (int i = 0; i < array.length; i++) {
+            String item = array[i];
+            if (item.equals(value)) {
+                return i;
+            }
+        }
+
+        return -1;
     }
 }
