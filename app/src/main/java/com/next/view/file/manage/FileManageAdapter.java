@@ -110,20 +110,20 @@ public class FileManageAdapter extends RecyclerView.Adapter<FileManageAdapter.Vi
                 FilterResults filterResults = new FilterResults();
 
                 String filter = constraint.toString();
+                ArrayList<FileInfo> filteredList = new ArrayList<>();
                 if (TextUtils.isEmpty(filter)) {
                     //没有过滤的内容，则使用源数据
-                    filterResults.values = FileManageAdapter.this.fileInfoList;
+                    filteredList.addAll(FileManageAdapter.this.fileInfoList);
                 } else {
-                    ArrayList<FileInfo> filteredList = new ArrayList<>();
                     for (FileInfo fileInfo : FileManageAdapter.this.fileInfoList) {
                         //这里根据需求，添加匹配规则
                         if (fileInfo.getFileName().toLowerCase().contains(filter.toLowerCase())) {
                             filteredList.add(fileInfo);
                         }
                     }
-                    filterResults.values = filteredList;
                 }
 
+                filterResults.values = filteredList;
                 return filterResults;
             }
 

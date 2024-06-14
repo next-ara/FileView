@@ -110,11 +110,12 @@ public class ApplicationAdapter extends RecyclerView.Adapter<ApplicationAdapter.
                 FilterResults filterResults = new FilterResults();
 
                 String filter = constraint.toString();
+                ArrayList<FileInfo> filteredList = new ArrayList<>();
                 if (TextUtils.isEmpty(filter)) {
                     //没有过滤的内容，则使用源数据
-                    filterResults.values = ApplicationAdapter.this.fileInfoList;
+                    filteredList.addAll(ApplicationAdapter.this.fileInfoList);
                 } else {
-                    ArrayList<FileInfo> filteredList = new ArrayList<>();
+
                     for (FileInfo fileInfo : ApplicationAdapter.this.fileInfoList) {
                         //这里根据需求，添加匹配规则
                         AppInfo appInfo = (AppInfo) fileInfo;
@@ -122,9 +123,9 @@ public class ApplicationAdapter extends RecyclerView.Adapter<ApplicationAdapter.
                             filteredList.add(fileInfo);
                         }
                     }
-                    filterResults.values = filteredList;
                 }
 
+                filterResults.values = filteredList;
                 return filterResults;
             }
 
