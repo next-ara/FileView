@@ -49,7 +49,17 @@ public class FileTypeTool {
             return FileType.FILE_TYPE_FOLDER;
         }
 
-        String fileExtension = getFileExtension(fileInfo.getFileName());
+        return getFileType(fileInfo.getFileName());
+    }
+
+    /**
+     * 获取文件类型
+     *
+     * @param fileName 文件名
+     * @return 文件类型
+     */
+    public static int getFileType(String fileName) {
+        String fileExtension = getFileExtension(fileName);
         if (getArrayIndex(AudioTypeListLoader.AUDIO_EXTENSION, fileExtension) >= 0) {
             return FileType.FILE_TYPE_AUDIO;
         }
