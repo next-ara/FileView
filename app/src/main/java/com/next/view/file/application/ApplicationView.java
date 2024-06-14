@@ -182,6 +182,8 @@ public class ApplicationView extends LinearLayout {
 
     /**
      * 修改选择模式
+     *
+     * @param isSelect 是否选择
      */
     public void changeSelectMode(boolean isSelect) {
         if (this.selectMode == GetAppListTool.SelectMode.SELECT_CLOSE && !isSelect) {
@@ -196,6 +198,34 @@ public class ApplicationView extends LinearLayout {
         this.selectMode = isSelect ? GetAppListTool.SelectMode.SELECT_FILE : GetAppListTool.SelectMode.SELECT_CLOSE;
         ArrayList<FileInfo> fileInfoList = this.adapterObj.getFileInfoList();
         this.getAppListTool.setItemSelectMode(fileInfoList, this.selectMode);
+        for (int i = 0; i < fileInfoList.size(); i++) {
+            this.adapterObj.notifyItemChanged(i);
+        }
+
+        //发送选择状态改变监听
+        this.sendSelectStateChange(isSelect);
+    }
+
+    /**
+     * 修改选择模式
+     *
+     * @param isSelect 是否选择
+     * @param fileInfo 文件信息对象
+     */
+    public void changeSelectMode(boolean isSelect, FileInfo fileInfo) {
+        if (this.selectMode == GetAppListTool.SelectMode.SELECT_CLOSE && !isSelect) {
+            return;
+        }
+
+        if (this.selectMode == GetAppListTool.SelectMode.SELECT_FILE && isSelect) {
+            return;
+        }
+
+        //设置选择模式
+        this.selectMode = isSelect ? GetAppListTool.SelectMode.SELECT_FILE : GetAppListTool.SelectMode.SELECT_CLOSE;
+        ArrayList<FileInfo> fileInfoList = this.adapterObj.getFileInfoList();
+        this.getAppListTool.setItemSelectMode(fileInfoList, this.selectMode);
+        fileInfo.setSelectType(isSelect ? FileInfo.SelectType.SELECT_TYPE_SELECT : FileInfo.SelectType.SELECT_TYPE_NONE);
         for (int i = 0; i < fileInfoList.size(); i++) {
             this.adapterObj.notifyItemChanged(i);
         }
@@ -409,7 +439,7 @@ public class ApplicationView extends LinearLayout {
     private void itemLongClick(FileInfo fileInfo) {
         if (this.selectMode == GetAppListTool.SelectMode.SELECT_CLOSE && !fileInfo.isDirectory()) {
             //修改选择模式
-            this.changeSelectMode(true);
+            this.changeSelectMode(true, fileInfo);
         }
     }
 
