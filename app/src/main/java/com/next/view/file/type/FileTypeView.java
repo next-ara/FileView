@@ -272,7 +272,22 @@ public class FileTypeView extends LinearLayout {
      * @param constraint 搜索内容
      */
     public void search(CharSequence constraint) {
+        //显示加载
+        this.showLoading();
+        //搜索
         this.adapterObj.getFilter().filter(constraint);
+    }
+
+    /**
+     * 设置搜索监听
+     */
+    private void setOnSearchListener() {
+        this.adapterObj.setOnSearchListener(() -> {
+            //关闭加载
+            this.closeLoading();
+            //发送文件加载完成监听
+            this.sendLoadComplete();
+        });
     }
 
     /**
@@ -387,6 +402,8 @@ public class FileTypeView extends LinearLayout {
 
         this.fileTypeView.setAdapter(this.adapterObj);
         ((SimpleItemAnimator) Objects.requireNonNull(this.fileTypeView.getItemAnimator())).setSupportsChangeAnimations(false);
+        //设置搜索监听
+        this.setOnSearchListener();
     }
 
     /**

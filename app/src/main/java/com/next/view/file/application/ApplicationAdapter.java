@@ -117,7 +117,8 @@ public class ApplicationAdapter extends RecyclerView.Adapter<ApplicationAdapter.
                     ArrayList<FileInfo> filteredList = new ArrayList<>();
                     for (FileInfo fileInfo : ApplicationAdapter.this.fileInfoList) {
                         //这里根据需求，添加匹配规则
-                        if (fileInfo.getFileName().toLowerCase().contains(filter.toLowerCase())) {
+                        AppInfo appInfo = (AppInfo) fileInfo;
+                        if (appInfo.getAppName().toLowerCase().contains(filter.toLowerCase())) {
                             filteredList.add(fileInfo);
                         }
                     }
@@ -155,7 +156,6 @@ public class ApplicationAdapter extends RecyclerView.Adapter<ApplicationAdapter.
      * 清空数据
      */
     public void clear() {
-        this.fileInfoList.clear();
         this.filterFileInfoList.clear();
         this.notifyDataSetChanged();
     }

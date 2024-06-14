@@ -155,7 +155,6 @@ public class FileManageAdapter extends RecyclerView.Adapter<FileManageAdapter.Vi
      * 清空数据
      */
     public void clear() {
-        this.fileInfoList.clear();
         this.filterFileInfoList.clear();
         this.notifyDataSetChanged();
     }
