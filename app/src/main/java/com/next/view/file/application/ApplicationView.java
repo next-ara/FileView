@@ -22,6 +22,9 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.SimpleItemAnimator;
 
+import com.next.view.file.OnFileClickListener;
+import com.next.view.file.OnFileLoadListener;
+import com.next.view.file.OnSelectStateListener;
 import com.next.view.file.R;
 import com.next.view.file.application.tool.GetAppListTool;
 import com.next.view.file.info.FileInfo;
@@ -40,17 +43,6 @@ import java.util.Objects;
  */
 public class ApplicationView extends LinearLayout {
 
-    //应用加载监听接口
-    public interface OnFileLoadListener {
-
-        /**
-         * 应用加载完成
-         *
-         * @param list 文件信息对象列表
-         */
-        void onLoadComplete(ArrayList<FileInfo> list);
-    }
-
     //应用列表控件
     private RecyclerView applicationView;
 
@@ -68,6 +60,9 @@ public class ApplicationView extends LinearLayout {
 
     //应用加载监听接口
     private OnFileLoadListener onFileLoadListener;
+
+    //选择状态监听接口
+    private OnSelectStateListener onSelectStateListener;
 
     //主线程Handler
     private Handler mainHandler;
@@ -186,20 +181,27 @@ public class ApplicationView extends LinearLayout {
     }
 
     /**
-     * 关闭选择模式
+     * 修改选择模式
      */
-    public void closeSelect() {
-        if (this.selectMode == GetAppListTool.SelectMode.SELECT_CLOSE) {
+    public void changeSelectMode(boolean isSelect) {
+        if (this.selectMode == GetAppListTool.SelectMode.SELECT_CLOSE && !isSelect) {
+            return;
+        }
+
+        if (this.selectMode == GetAppListTool.SelectMode.SELECT_FILE && isSelect) {
             return;
         }
 
         //设置选择模式
-        this.selectMode = GetAppListTool.SelectMode.SELECT_CLOSE;
+        this.selectMode = isSelect ? GetAppListTool.SelectMode.SELECT_FILE : GetAppListTool.SelectMode.SELECT_CLOSE;
         ArrayList<FileInfo> fileInfoList = this.adapterObj.getFileInfoList();
         this.getAppListTool.setItemSelectMode(fileInfoList, this.selectMode);
         for (int i = 0; i < fileInfoList.size(); i++) {
             this.adapterObj.notifyItemChanged(i);
         }
+
+        //发送选择状态改变监听
+        this.sendSelectStateChange(isSelect);
     }
 
     /**
@@ -223,19 +225,28 @@ public class ApplicationView extends LinearLayout {
     /**
      * 设置文件点击监听接口
      *
-     * @param fileClickListenerObj 文件点击监听接口
+     * @param onFileClickListener 文件点击监听接口
      */
-    public void setFileClickListener(ApplicationAdapter.FileClickListener fileClickListenerObj) {
-        this.adapterObj.setFileClickListener(fileClickListenerObj);
+    public void setFileClickListener(OnFileClickListener onFileClickListener) {
+        this.adapterObj.setOnFileClickListeners(onFileClickListener);
     }
 
     /**
      * 添加文件点击监听接口
      *
-     * @param fileClickListenerObj 文件点击监听接口
+     * @param onFileClickListener 文件点击监听接口
      */
-    public void addFileClickListener(ApplicationAdapter.FileClickListener fileClickListenerObj) {
-        this.adapterObj.addFileClickListener(fileClickListenerObj);
+    public void addFileClickListener(OnFileClickListener onFileClickListener) {
+        this.adapterObj.addFileClickListener(onFileClickListener);
+    }
+
+    /**
+     * 设置选择状态监听接口
+     *
+     * @param onSelectStateListener 选择状态监听接口
+     */
+    public void setOnSelectStateListener(OnSelectStateListener onSelectStateListener) {
+        this.onSelectStateListener = onSelectStateListener;
     }
 
     /**
@@ -324,7 +335,7 @@ public class ApplicationView extends LinearLayout {
         //初始化文件管理适配器对象
         this.adapterObj = new ApplicationAdapter(this.getContext());
         //添加文件点击监听
-        this.addFileClickListener(new ApplicationAdapter.FileClickListener() {
+        this.addFileClickListener(new OnFileClickListener() {
             @Override
             public void onClick(FileInfo fileInfo) {
                 ApplicationView.this.itemClick(fileInfo);
@@ -380,14 +391,8 @@ public class ApplicationView extends LinearLayout {
      */
     private void itemLongClick(FileInfo fileInfo) {
         if (this.selectMode == GetAppListTool.SelectMode.SELECT_CLOSE && !fileInfo.isDirectory()) {
-            //设置选择模式
-            this.selectMode = GetAppListTool.SelectMode.SELECT_FILE;
-            ArrayList<FileInfo> fileInfoList = this.adapterObj.getFileInfoList();
-            this.getAppListTool.setItemSelectMode(fileInfoList, this.selectMode);
-            fileInfo.setSelectType(FileInfo.SelectType.SELECT_TYPE_SELECT);
-            for (int i = 0; i < fileInfoList.size(); i++) {
-                this.adapterObj.notifyItemChanged(i);
-            }
+            //修改选择模式
+            this.changeSelectMode(true);
         }
     }
 
@@ -415,7 +420,18 @@ public class ApplicationView extends LinearLayout {
      */
     private void sendLoadComplete() {
         if (this.onFileLoadListener != null) {
-            this.onFileLoadListener.onLoadComplete(this.adapterObj.getFileInfoList());
+            this.onFileLoadListener.onLoadComplete();
+        }
+    }
+
+    /**
+     * 发送选择状态改变监听
+     *
+     * @param isSelect 是否选中
+     */
+    private void sendSelectStateChange(boolean isSelect) {
+        if (this.onSelectStateListener != null) {
+            this.onSelectStateListener.onSelectStateChanged(isSelect);
         }
     }
 

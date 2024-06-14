@@ -18,6 +18,8 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.bumptech.glide.request.transition.DrawableCrossFadeFactory;
+import com.next.view.file.OnFileClickListener;
+import com.next.view.file.OnSearchListener;
 import com.next.view.file.R;
 import com.next.view.file.info.FileInfo;
 import com.next.view.file.tool.FileTypeTool;
@@ -33,33 +35,6 @@ import java.util.ArrayList;
  */
 public class FileManageAdapter extends RecyclerView.Adapter<FileManageAdapter.ViewHolder> implements Filterable {
 
-    //文件点击监听接口
-    public interface FileClickListener {
-
-        /**
-         * 文件点击事件
-         *
-         * @param fileInfo 文件信息对象
-         */
-        void onClick(FileInfo fileInfo);
-
-        /**
-         * 文件长按事件
-         *
-         * @param fileInfo 文件信息对象
-         */
-        void onLongClick(FileInfo fileInfo);
-    }
-
-    //搜索完成监听接口
-    public interface OnSearchListener {
-
-        /**
-         * 搜索完成事件
-         */
-        void onComplete();
-    }
-
     //文件信息对象列表
     private ArrayList<FileInfo> fileInfoList = new ArrayList<>();
 
@@ -67,7 +42,7 @@ public class FileManageAdapter extends RecyclerView.Adapter<FileManageAdapter.Vi
     private ArrayList<FileInfo> filterFileInfoList = new ArrayList<>();
 
     //文件点击监听接口
-    private ArrayList<FileClickListener> fileClickListener = new ArrayList<>();
+    private ArrayList<OnFileClickListener> onFileClickListeners = new ArrayList<>();
 
     //搜索完成监听接口
     private OnSearchListener onSearchListener;
@@ -188,20 +163,20 @@ public class FileManageAdapter extends RecyclerView.Adapter<FileManageAdapter.Vi
     /**
      * 设置文件点击监听
      *
-     * @param fileClickListener 文件点击监听接口
+     * @param onFileClickListeners 文件点击监听接口
      */
-    public void setFileClickListener(FileClickListener fileClickListener) {
-        this.fileClickListener.clear();
-        this.fileClickListener.add(fileClickListener);
+    public void setOnFileClickListeners(OnFileClickListener onFileClickListeners) {
+        this.onFileClickListeners.clear();
+        this.onFileClickListeners.add(onFileClickListeners);
     }
 
     /**
      * 添加文件点击监听
      *
-     * @param fileClickListener 文件点击监听接口
+     * @param onFileClickListener 文件点击监听接口
      */
-    public void addFileClickListener(FileClickListener fileClickListener) {
-        this.fileClickListener.add(fileClickListener);
+    public void addFileClickListener(OnFileClickListener onFileClickListener) {
+        this.onFileClickListeners.add(onFileClickListener);
     }
 
     /**
@@ -284,16 +259,16 @@ public class FileManageAdapter extends RecyclerView.Adapter<FileManageAdapter.Vi
      * @param fileInfo 文件信息对象
      */
     private void setFileClick(ViewHolder holder, FileInfo fileInfo) {
-        if (this.fileClickListener != null) {
+        if (this.onFileClickListeners != null) {
             holder.itemView.setOnClickListener(view -> {
-                for (FileClickListener fileClickListener : this.fileClickListener) {
-                    fileClickListener.onClick(fileInfo);
+                for (OnFileClickListener onFileClickListener : this.onFileClickListeners) {
+                    onFileClickListener.onClick(fileInfo);
                 }
             });
 
             holder.itemView.setOnLongClickListener(view -> {
-                for (FileClickListener fileClickListener : this.fileClickListener) {
-                    fileClickListener.onLongClick(fileInfo);
+                for (OnFileClickListener onFileClickListener : this.onFileClickListeners) {
+                    onFileClickListener.onLongClick(fileInfo);
                 }
                 return true;
             });
