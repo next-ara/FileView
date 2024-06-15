@@ -1,17 +1,17 @@
 package com.next.view.file.type.tool;
 
 import android.content.ContentResolver;
-import android.content.ContentUris;
 import android.database.Cursor;
 import android.net.Uri;
-import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 
+import com.next.module.file2.File2;
+import com.next.module.file2.File2Creator;
 import com.next.module.file2.FileConfig;
-import com.next.module.file2.MediaFile;
 import com.next.view.file.info.FileInfo;
 import com.next.view.file.tool.FileTool;
 
+import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
@@ -51,11 +51,7 @@ abstract public class TypeListLoader {
         Uri uri = MediaStore.Files.getContentUri("external");
 
         String[] projection = new String[]{
-                MediaStore.Files.FileColumns._ID,
-                MediaStore.Files.FileColumns.DISPLAY_NAME,
-                MediaStore.Files.FileColumns.SIZE,
-                MediaStore.Files.FileColumns.MIME_TYPE,
-                MediaStore.Files.FileColumns.DATE_MODIFIED
+                MediaStore.Files.FileColumns.DATA,
         };
 
         StringBuilder selection = new StringBuilder(MediaStore.Files.FileColumns.DATA);
@@ -77,22 +73,18 @@ abstract public class TypeListLoader {
         if (c != null) {
             try {
                 while (c.moveToNext()) {
-                    long imageId = c.getLong(0);
-                    Uri mediaUri = ContentUris.withAppendedId(uri, imageId);
-                    final String name = c.getString(1);
-                    final long size = c.getLong(2);
-                    final String mimeType = c.getString(3);
-                    final long lastModified = c.getLong(4);
+                    String filePath = c.getString(0);
+                    File2 file2 = File2Creator.fromFile(new File(filePath));
 
                     FileInfo fileInfo = new FileInfo();
-                    fileInfo.setFileName(name);
-                    fileInfo.setFileSize(FileTool.formetFileSize(size));
-                    fileInfo.setDirectory(DocumentsContract.Document.MIME_TYPE_DIR.equals(mimeType));
-                    fileInfo.setLastModified(lastModified * 1000);
+                    fileInfo.setFileName(file2.getName());
+                    fileInfo.setFileSize(FileTool.formetFileSize(file2.length()));
+                    fileInfo.setDirectory(file2.isDirectory());
+                    fileInfo.setLastModified(file2.lastModified());
                     fileInfo.setLastModifiedText(new SimpleDateFormat("yyyy/MM/dd HH:mm").format(fileInfo.getLastModified()));
-                    fileInfo.setFileType(DocumentsContract.Document.MIME_TYPE_DIR.equals(mimeType) ? null : mimeType);
+                    fileInfo.setFileType(file2.getType());
                     fileInfo.setSelectType(FileInfo.SelectType.SELECT_TYPE_NONE);
-                    fileInfo.setFile2(new MediaFile(mediaUri));
+                    fileInfo.setFile2(file2);
                     typeList.add(fileInfo);
                 }
             } finally {
