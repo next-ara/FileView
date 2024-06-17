@@ -52,7 +52,7 @@
         android:layout_centerInParent="true"
         android:visibility="gone"
         app:loading_color_0="?colorOnPrimaryContainer"
-        app:loading_color_1="?colorSecondary"
-        app:loading_color_2="?colorPrimaryInverse" />
+        app:loading_color_1="?colorOnPrimaryContainer"
+        app:loading_color_2="?colorOnPrimaryContainer" />
 
 </RelativeLayout>
