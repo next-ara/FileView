@@ -238,8 +238,10 @@ public class FileManageView extends LinearLayout {
     public void selectAll() {
         ArrayList<FileInfo> list = this.adapterObj.getFileInfoList();
         for (FileInfo fileInfo : list) {
-            //设置文件选择类型
-            this.setItemSelectType(true, fileInfo);
+            if (fileInfo.getSelectType() != FileInfo.SelectType.SELECT_TYPE_SELECT) {
+                //设置文件选择类型
+                this.setItemSelectType(true, fileInfo);
+            }
         }
     }
 
@@ -249,8 +251,10 @@ public class FileManageView extends LinearLayout {
     public void unSelectAll() {
         ArrayList<FileInfo> list = this.adapterObj.getFileInfoList();
         for (FileInfo fileInfo : list) {
-            //设置文件选择类型
-            this.setItemSelectType(false, fileInfo);
+            if (fileInfo.getSelectType() != FileInfo.SelectType.SELECT_TYPE_UNSELECT) {
+                //设置文件选择类型
+                this.setItemSelectType(false, fileInfo);
+            }
         }
     }
 
