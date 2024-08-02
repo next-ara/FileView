@@ -51,8 +51,7 @@
         android:layout_height="@dimen/dp_85"
         android:layout_centerInParent="true"
         android:visibility="gone"
-        app:loading_color_0="?colorOnPrimaryContainer"
-        app:loading_color_1="?colorOnPrimaryContainer"
-        app:loading_color_2="?colorOnPrimaryContainer" />
+        app:loadingColor="?colorOnPrimaryContainer"
+        app:loadingStrokeWidth="@dimen/dp_1" />
 
 </RelativeLayout>
