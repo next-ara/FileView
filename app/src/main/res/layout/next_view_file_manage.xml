@@ -47,10 +47,11 @@
 
     <com.next.view.loading.LoadingView
         android:id="@+id/loadingView"
-        android:layout_width="@dimen/dp_85"
-        android:layout_height="@dimen/dp_85"
+        android:layout_width="@dimen/dp_40"
+        android:layout_height="@dimen/dp_40"
         android:layout_centerInParent="true"
         android:visibility="gone"
-        app:loadingColor="?colorOnPrimaryContainer" />
+        app:loadingColor="?colorOnPrimaryContainer"
+        app:loadingStrokeWidth="@dimen/dp_3" />
 
 </RelativeLayout>
