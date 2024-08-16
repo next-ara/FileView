@@ -30,6 +30,7 @@ import com.next.view.file.application.tool.GetAppListTool;
 import com.next.view.file.info.FileInfo;
 import com.next.view.file.manage.FileManageAdapter;
 import com.next.view.file.tool.DeviceTool;
+import com.next.view.file.tool.ViewTool;
 import com.next.view.file.type.tool.GetTypeListTool;
 import com.next.view.loading.LoadingView;
 
@@ -435,6 +436,10 @@ public class FileTypeView extends LinearLayout {
         ((SimpleItemAnimator) Objects.requireNonNull(this.fileTypeView.getItemAnimator())).setSupportsChangeAnimations(false);
         //设置搜索监听
         this.setOnSearchListener();
+
+        this.post(() -> {
+            ViewTool.setViewOnScreenCenter(this.loadingView);
+        });
     }
 
     /**

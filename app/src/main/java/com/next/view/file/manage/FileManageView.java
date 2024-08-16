@@ -33,6 +33,7 @@ import com.next.view.file.info.FileInfo;
 import com.next.view.file.manage.tool.FileLoadException;
 import com.next.view.file.manage.tool.GetFileListTool;
 import com.next.view.file.tool.DeviceTool;
+import com.next.view.file.tool.ViewTool;
 import com.next.view.loading.LoadingView;
 
 import java.util.ArrayList;
@@ -533,6 +534,10 @@ public class FileManageView extends LinearLayout {
         ((SimpleItemAnimator) Objects.requireNonNull(this.fileManageView.getItemAnimator())).setSupportsChangeAnimations(false);
         //设置搜索监听
         this.setOnSearchListener();
+
+        this.post(() -> {
+            ViewTool.setViewOnScreenCenter(this.loadingView);
+        });
     }
 
     /**
